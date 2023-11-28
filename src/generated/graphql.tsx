@@ -1362,6 +1362,11 @@ export type AdminSignUpAfterInviteMutationVariables = Exact<{
 
 export type AdminSignUpAfterInviteMutation = { __typename?: 'Mutation', adminSignUpAfterInvite: { __typename?: 'Token', access_token: string, refresh_token: string } };
 
+export type GenerateQrCodeDataUrlMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GenerateQrCodeDataUrlMutation = { __typename?: 'Mutation', generateQrCodeDataURL: string };
+
 export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1439,6 +1444,36 @@ export function useAdminSignUpAfterInviteMutation(baseOptions?: Apollo.MutationH
 export type AdminSignUpAfterInviteMutationHookResult = ReturnType<typeof useAdminSignUpAfterInviteMutation>;
 export type AdminSignUpAfterInviteMutationResult = Apollo.MutationResult<AdminSignUpAfterInviteMutation>;
 export type AdminSignUpAfterInviteMutationOptions = Apollo.BaseMutationOptions<AdminSignUpAfterInviteMutation, AdminSignUpAfterInviteMutationVariables>;
+export const GenerateQrCodeDataUrlDocument = gql`
+    mutation GenerateQRCodeDataUrl {
+  generateQrCodeDataURL
+}
+    `;
+export type GenerateQrCodeDataUrlMutationFn = Apollo.MutationFunction<GenerateQrCodeDataUrlMutation, GenerateQrCodeDataUrlMutationVariables>;
+
+/**
+ * __useGenerateQrCodeDataUrlMutation__
+ *
+ * To run a mutation, you first call `useGenerateQrCodeDataUrlMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateQrCodeDataUrlMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateQrCodeDataUrlMutation, { data, loading, error }] = useGenerateQrCodeDataUrlMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGenerateQrCodeDataUrlMutation(baseOptions?: Apollo.MutationHookOptions<GenerateQrCodeDataUrlMutation, GenerateQrCodeDataUrlMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GenerateQrCodeDataUrlMutation, GenerateQrCodeDataUrlMutationVariables>(GenerateQrCodeDataUrlDocument, options);
+      }
+export type GenerateQrCodeDataUrlMutationHookResult = ReturnType<typeof useGenerateQrCodeDataUrlMutation>;
+export type GenerateQrCodeDataUrlMutationResult = Apollo.MutationResult<GenerateQrCodeDataUrlMutation>;
+export type GenerateQrCodeDataUrlMutationOptions = Apollo.BaseMutationOptions<GenerateQrCodeDataUrlMutation, GenerateQrCodeDataUrlMutationVariables>;
 export const GetRolesDocument = gql`
     query GetRoles {
   getRoles {

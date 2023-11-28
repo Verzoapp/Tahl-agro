@@ -4,6 +4,8 @@ import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Cog6ToothIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -11,7 +13,6 @@ function classNames(...classes: string[]) {
 
 const LeftSideBar = () => {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const navigation = [
     {
       name: "Dashboard",
@@ -207,8 +208,9 @@ const LeftSideBar = () => {
                 {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
-                    <img
-                      className="h-8 w-auto"
+                    <Image
+                      height={32}
+                      width={32}
                       src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
                       alt="Your Company"
                     />
@@ -219,7 +221,7 @@ const LeftSideBar = () => {
                         <ul role="list" className="-mx-2 space-y-1">
                           {navigation.map((item) => (
                             <li key={item.name}>
-                              <a
+                              <Link
                                 href={item.href}
                                 className={classNames(
                                   item.href
@@ -239,7 +241,7 @@ const LeftSideBar = () => {
                                   {item.svg}
                                 </span>
                                 {item.name}
-                              </a>
+                              </Link>
                             </li>
                           ))}
                         </ul>

@@ -1,13 +1,7 @@
+"use client";
 import React from "react";
 
-import {
-  Activity,
-  CreditCard,
-  DollarSign,
-  Download,
-  Users,
-} from "lucide-react";
-import Image from "next/image";
+import { Activity, CreditCard, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -18,26 +12,15 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RecentSales } from "@/components/recent-sales";
+import { useGetRolesQuery } from "@/src/generated/graphql";
 
 const Dashboard = () => {
+  const getRoles = useGetRolesQuery();
+
+  console.log(getRoles.data?.getRoles);
+
   return (
     <>
-      <div className="md:hidden">
-        <Image
-          src="/examples/dashboard-light.png"
-          width={1280}
-          height={866}
-          alt="Dashboard"
-          className="block dark:hidden"
-        />
-        <Image
-          src="/examples/dashboard-dark.png"
-          width={1280}
-          height={866}
-          alt="Dashboard"
-          className="hidden dark:block"
-        />
-      </div>
       <div className="hidden flex-col md:flex">
         <div className="flex-1 space-y-4 p-8 pt-0">
           <div className="flex items-center justify-between space-y-2">
@@ -45,7 +28,6 @@ const Dashboard = () => {
               Dashboard
             </h2>
             <div className="flex items-center space-x-2">
-              {/* <CalendarDateRangePicker /> */}
               <button
                 type="button"
                 className="inline-flex items-center rounded border border-transparent bg-[#2aa249] px-4 py-[6px] text-sm font-normal text-white hover:bg-primary-verzobluehover focus:outline-none"
@@ -153,7 +135,6 @@ const Dashboard = () => {
                           </span>
                         </div>
                       </Label>
-                      {/* <Switch id="necessary" defaultChecked /> */}
                     </div>
                     <div className="flex items-center justify-between space-x-2">
                       <Label
@@ -170,7 +151,6 @@ const Dashboard = () => {
                           </span>
                         </div>
                       </Label>
-                      {/* <Switch id="functional" /> */}
                     </div>
                     <div className="flex items-center justify-between space-x-2">
                       <Label
@@ -187,7 +167,6 @@ const Dashboard = () => {
                           </span>
                         </div>
                       </Label>
-                      {/* <Switch id="performance" /> */}
                     </div>
                     <div className="flex items-center justify-between space-x-2">
                       <Label
@@ -204,7 +183,6 @@ const Dashboard = () => {
                           </span>
                         </div>
                       </Label>
-                      {/* <Switch id="performance" /> */}
                     </div>
                     <div className="flex items-center justify-between space-x-2">
                       <Label
@@ -221,7 +199,6 @@ const Dashboard = () => {
                           </span>
                         </div>
                       </Label>
-                      {/* <Switch id="performance" /> */}
                     </div>
                   </CardContent>
                 </Card>

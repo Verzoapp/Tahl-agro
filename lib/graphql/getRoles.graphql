@@ -1,0 +1,8 @@
+query GetRoles {
+  getRoles {
+    id
+    roleName
+    archived
+    description
+  }
+}

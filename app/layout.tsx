@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { Inter } from "next/font/google";
+import { ApolloProvider } from "@/src/apollo/ApolloProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,10 +17,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <main>{children}</main>
-        <Toaster />
-      </body>
+      <ApolloProvider>
+        <body className={inter.className}>
+          <main>{children}</main>
+          <Toaster />
+        </body>
+      </ApolloProvider>
     </html>
   );
 }

@@ -1,0 +1,8 @@
+mutation adminLogin($email: String!, $password: String!, $twoFACode: String) {
+  adminLogin(
+    input: { email: $email, password: $password, twoFACode: $twoFACode }
+  ) {
+    access_token
+    refresh_token
+  }
+}

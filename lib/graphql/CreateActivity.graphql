@@ -1,0 +1,14 @@
+mutation CreateActivity($name: String!, $cost: Float!, $cropProfileId: String!, $activityEquipment: [CreateActivityEquipment!], $activityInput: [CreateActivityInput!]){
+  createActivity(input:{
+    name:$name
+    cost:$cost
+    cropProfileId:$cropProfileId
+    activityEquipment:$activityEquipment
+    activityInput:$activityInput
+  }){
+    id
+    name
+    cost
+    totalCost
+  }
+}

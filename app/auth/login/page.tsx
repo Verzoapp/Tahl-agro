@@ -1,8 +1,45 @@
+"use client"
 import Logo from "@/components/icons/Logo";
+import { saveToken } from "@/lib/auth";
+import { useAdminLoginMutation } from "@/src/generated/graphql";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
+import { useForm } from "react-hook-form";
+
+type FormData = {
+  email: string;
+  password: string;
+  twoFACode: string
+};
 
 const Login = () => {
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    watch,
+    setError,
+    formState: { errors },
+  } = useForm<FormData>();
+  const router = useRouter();
+  const [adminLoginMutation, { data, loading, error }] = useAdminLoginMutation()
+
+  const onSubmitHandler =async (form: FormData) => {
+    try {
+      const response = await adminLoginMutation({
+        variables: {
+           ...form,
+        },
+      })
+    const responseToken = response.data?.adminLogin.access_token;
+      await saveToken(responseToken!);
+      router.push("/dashboard")
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
   return (
     <div className=" flex items-center justify-center h-screen">
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 pb-12 lg:px-8">
@@ -15,7 +52,11 @@ const Login = () => {
           </h2>
         </div>
         <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className=" flex flex-col gap-y-6" action="#" method="POST">
+          <form className=" flex flex-col gap-y-6" 
+            action="#" 
+            method="POST"
+            onSubmit={handleSubmit(onSubmitHandler)}
+            >
             <div>
               <label
                 htmlFor="email"
@@ -26,11 +67,11 @@ const Login = () => {
               <div className="mt-[6px]">
                 <input
                   id="email"
-                  name="email"
                   type="email"
                   autoComplete="email"
                   required
                   className="block w-full h-[36px] focus:ring-2 focus:ring-primary-green rounded-md border border-gray-100 bg-gray-50 px-3 py-1.5 text-gray-700 placeholder:text-gray-400 sm:text-sm sm:leading-6 focus:outline-none"
+                  {...register("email")}
                 />
               </div>
             </div>
@@ -46,10 +87,10 @@ const Login = () => {
               <div className="mt-[6px]">
                 <input
                   id="code"
-                  name="code"
                   type="code"
                   required
                   className="block w-full h-[36px] focus:ring-2 focus:ring-primary-green rounded-md border border-gray-100 bg-gray-50 px-3 py-1.5 text-gray-700 placeholder:text-gray-400 sm:text-sm sm:leading-6 focus:outline-none"
+                  {...register("twoFACode")}
                 />
               </div>
             </div>
@@ -74,11 +115,11 @@ const Login = () => {
               <div className="mt-[6px]">
                 <input
                   id="password"
-                  name="password"
                   type="password"
                   autoComplete="current-password"
                   required
                   className="block w-full h-[36px] focus:ring-2 focus:ring-primary-green rounded-md border border-gray-100 bg-gray-50 px-3 py-1.5 text-gray-700 placeholder:text-gray-400 sm:text-sm sm:leading-6 focus:outline-none"
+                  {...register("password")}
                 />
               </div>
             </div>
@@ -86,7 +127,9 @@ const Login = () => {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center mt-3 rounded-md bg-primary-green px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-primary-greenhover focus-visible:outline"
+                className={`flex w-full justify-center mt-3 rounded-md bg-primary-green px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-primary-greenhover focus-visible:outline ${
+                  loading ? "opacity-70 " : ""
+                }`}
               >
                 Sign in
               </button>

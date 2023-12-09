@@ -1,0 +1,8 @@
+query GetEquipments{
+  getEquipments{
+    id
+    name
+    costPerDay
+    createdAt
+  }
+}

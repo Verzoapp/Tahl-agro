@@ -1,6 +1,0 @@
-mutation AdminSignUpAfterInvite($adminInviteId: String!, $password: String!) {
-  adminSignUpAfterInvite(adminInviteId: $adminInviteId, password: $password) {
-    access_token
-    refresh_token
-  }
-}

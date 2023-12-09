@@ -1,0 +1,15 @@
+query GetFarmLots{
+  getFarmLots{
+    id
+    name
+    landGroup{
+      id
+      name
+    }
+    coorperative{
+      id
+      name
+    }
+    archived
+  }
+}

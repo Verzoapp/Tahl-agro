@@ -1,0 +1,15 @@
+mutation CreateFarmLot($name: String!, $landGroupId: String!, $coorperativeId: String!, $geographicAreaId: String!, $cropProfileId: String!){
+  createFarmLot(input:{
+    name:$name
+    landGroupId:$landGroupId
+    coorperativeId:$coorperativeId
+    geographicAreaId:$geographicAreaId
+    cropProfileId:$cropProfileId
+  }){
+    id
+    name
+    landGroupId
+    coorperativeId
+    createdAt
+  }
+}

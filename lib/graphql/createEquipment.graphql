@@ -1,0 +1,10 @@
+mutation CreateEquipment($name: String!, $costPerDay: Float!){
+  createEquipment(input:{
+    name:$name
+    costPerDay:$costPerDay
+  }){
+    id
+    name
+    costPerDay
+  }
+}

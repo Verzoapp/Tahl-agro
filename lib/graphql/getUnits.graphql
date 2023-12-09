@@ -1,0 +1,6 @@
+query GetUnits{
+  getUnits{
+    id
+    unitName
+  }
+}

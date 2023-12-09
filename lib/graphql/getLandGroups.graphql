@@ -1,0 +1,7 @@
+query GetLandGroups{
+  getLandGroups{
+    id
+    name
+    createdAt
+  }
+}

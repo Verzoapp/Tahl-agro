@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import React, { useEffect } from "react";
-import { useGenerateQrCodeDataUrlMutation } from "@/src/generated/graphql";
 import { QRCODE } from "../create-password/page";
 
 const GoogleAuth = () => {

@@ -1,0 +1,6 @@
+query GetInputCategories{
+  getInputCategories{
+    id
+    name
+  }
+}

@@ -1,0 +1,7 @@
+query GetCropProfiles {
+  getCropProfiles{
+    id
+    cropName
+    lifeCycle
+  }
+}

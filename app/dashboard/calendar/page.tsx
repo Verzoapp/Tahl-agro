@@ -1,5 +1,6 @@
 "use client";
 import { CalendarIcon } from "@heroicons/react/20/solid";
+import Link from "next/link";
 import { Fragment, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import React from "react";
@@ -8,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AddTaskModal from "@/components/modals/addTaskModal";
 import ViewTaskModal from "@/components/modals/viewTaskModal";
 import DailyTasksModal from "@/components/modals/dailyTasksModal";
+import { useGetActivitiesQuery } from "@/src/generated/graphql";
 
 const meetings = [
   {
@@ -105,13 +107,41 @@ const meetings = [
   // More meetings...
 ];
 
+interface Activity {
+  id: string;
+  name: string ;
+  updatedAt: any;
+  adminId: string;
+  cropProfile:{
+    cropName: String
+  };
+  admin: {
+    __typename?: 'Admin';
+    fullname?: string;
+    // Add more properties if needed
+  }
+}
+
 const CalendarPage = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [isActive, setIsActive] = useState("Upcoming-tasks");
   const [openAddTaskModal, setOpenAddTaskModal] = useState(false);
   const [openViewTaskModal, setOpenViewTaskModal] = useState(false);
   const [openDailyTasksModal, setOpenDailyTasksModal] = useState(false);
-
+  const getActivity = useGetActivitiesQuery()
+  const activityList = getActivity.data?.getActivities
+  const [matchingData, setMatchingData] = useState<Activity[]>([]); 
+  const handleSelect = () => {
+    const selectedDate = date?.toDateString();
+    const filteredData: any = activityList?.filter(
+      item => new Date(item?.updatedAt).toDateString() === selectedDate
+    ); 
+    setMatchingData(filteredData);
+    setOpenDailyTasksModal(true)
+    date ? console.log(selectedDate) : console.log("date is undefined")
+    
+  };
+  console.log(matchingData)
   return (
     <div>
       <div className="flex items-center justify-between space-y-2 lg:px-[40px] xl:px-[40px]">
@@ -172,22 +202,29 @@ const CalendarPage = () => {
                   Select a date to view tasks
                 </p>
                 <div className=" w-full h-auto">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={() => {
-                      setDate;
-                      setOpenDailyTasksModal(true);
-                    }}
-                    className="rounded-md border flex justify-center w-10/12"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setOpenAddTaskModal(true)}
-                    className="mt-8 w-10/12 rounded-md bg-[#2aa249] hover:bg-[#238c3d] px-3 py-2 text-sm font-medium text-white"
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  onDayClick={handleSelect}
+                  className="rounded-md border flex justify-center w-10/12"
+                />
+                  <Link
+                    href="/dashboard/calendar/create-activity"
+                   
+                    className="mt-8 w-10/12 block text-center rounded-md bg-[#2aa249] hover:bg-[#238c3d] px-3 py-2 text-sm font-medium text-white"
                   >
-                    Add task
-                  </button>
+                    Create activity
+                  </Link>
+                  <div>
+                    <Link
+                      href="/dashboard/calendar/activity-to-farm-lot"
+
+                      className="mt-8 w-10/12 block text-center rounded-md bg-[#2aa249] hover:bg-[#238c3d] px-3 py-2 text-sm font-medium text-white"
+                    >
+                      Add activity to farm lot
+                    </Link>
+                  </div>
                 </div>
               </div>
               <div className=" w-3/5 flex flex-col pr-4">
@@ -266,12 +303,26 @@ const CalendarPage = () => {
                   Select a date to view tasks
                 </p>
                 <div className=" w-full h-auto">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    className="rounded-md border flex justify-center w-10/12"
-                  />
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={() => {
+                    // Assuming your data array is stored in a variable named 'dataArray'
+                    setDate;
+                    const matchingData = activityList?.filter(item => {
+                      // Assuming 'updatedAt' is the property representing the date in your data
+                      const itemDate = new Date(item?.updatedAt).toDateString();
+                      const selectedDate = date?.toDateString();
+                      return itemDate === selectedDate;
+                    });
+                  
+                    console.log('Matching Data:', matchingData);
+                  
+                    // Other actions you want to perform
+                     // Assuming this is your setter function
+                  }}
+                  className="rounded-md border flex justify-center w-10/12"
+                />
                   <button
                     type="button"
                     onClick={() => setOpenAddTaskModal(true)}
@@ -460,6 +511,7 @@ const CalendarPage = () => {
         setOpenViewTaskModal={setOpenViewTaskModal}
       />
       <DailyTasksModal
+        activity={matchingData}
         openDailyTasksModal={openDailyTasksModal}
         setOpenDailyTasksModal={setOpenDailyTasksModal}
       />

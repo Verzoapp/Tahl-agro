@@ -1,0 +1,8 @@
+mutation AddActivityToCalendar($activityId: String!, $farmLotId: String!, $startTime: Date!, $endTime: Date!){
+  addActivityToFarmCalendar(input:{
+    activityId:$activityId
+    farmLotId:$farmLotId
+    startTime:$startTime
+    endTime:$endTime
+  })
+}

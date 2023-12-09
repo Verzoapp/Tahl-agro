@@ -12,12 +12,18 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RecentSales } from "@/components/recent-sales";
-import { useGetRolesQuery } from "@/src/generated/graphql";
+import { useGetActivitiesQuery, useGetCropProfilesQuery, useGetFarmLotsQuery, useGetFarmerProfilesQuery, useGetGeoCorpsQuery, useGetLandGroupsQuery } from "@/src/generated/graphql";
 
 const Dashboard = () => {
-  const getRoles = useGetRolesQuery();
-
-  console.log(getRoles.data?.getRoles);
+  const getFarmerProfiles = useGetFarmerProfilesQuery();
+  const getGeoCorps = useGetGeoCorpsQuery()
+  const getFarmLots = useGetFarmLotsQuery()
+  const getLandGroups = useGetLandGroupsQuery()
+  const getActivities = useGetActivitiesQuery()
+  const farmersNumber = getFarmerProfiles.data?.getFarmerProfiles.length
+  const numberCorps = getGeoCorps.data?.getGeoCorps.length
+  const numberOfLandGroups = getLandGroups.data?.getLandGroups.length
+  const numberOfFarmersLot = getFarmLots.data?.getFarmLots.length
 
   return (
     <>
@@ -60,9 +66,9 @@ const Dashboard = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-gray-600">150</div>
+                    <div className="text-2xl font-bold text-gray-600">{numberCorps}</div>
                     <p className="text-xs text-gray-600">
-                      +20.1% from last month
+                    
                     </p>
                   </CardContent>
                 </Card>
@@ -74,9 +80,9 @@ const Dashboard = () => {
                     <Users className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-gray-600">100</div>
+                    <div className="text-2xl font-bold text-gray-600">{farmersNumber}</div>
                     <p className="text-xs text-gray-600">
-                      +10.1% from last month
+                     
                     </p>
                   </CardContent>
                 </Card>
@@ -88,9 +94,9 @@ const Dashboard = () => {
                     <CreditCard className="h-4 w-4 text-gray-600" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-gray-600">+34</div>
+                    <div className="text-2xl font-bold text-gray-600">{numberOfLandGroups}</div>
                     <p className="text-xs text-muted-foreground">
-                      +3% from last month
+                      
                     </p>
                   </CardContent>
                 </Card>
@@ -102,9 +108,9 @@ const Dashboard = () => {
                     <Activity className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-gray-600">73</div>
+                    <div className="text-2xl font-bold text-gray-600">{numberOfFarmersLot}</div>
                     <p className="text-xs text-muted-foreground">
-                      +11 since last month
+                      
                     </p>
                   </CardContent>
                 </Card>

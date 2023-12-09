@@ -1,0 +1,14 @@
+query GetActivities{
+  getActivities{
+    id
+    name
+    updatedAt
+    adminId
+    admin{
+      fullname
+    }
+    cropProfile{
+      cropName
+    }
+  }
+}

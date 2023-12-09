@@ -545,6 +545,7 @@ export type Mutation = {
   createWarehouse?: Maybe<Warehouse>;
   deleteActivity?: Maybe<Scalars['Boolean']['output']>;
   deleteAdmin?: Maybe<Scalars['Boolean']['output']>;
+  deleteAdminInvite?: Maybe<Scalars['Boolean']['output']>;
   deleteAllActivities?: Maybe<Scalars['Boolean']['output']>;
   deleteAllCropProfiles?: Maybe<Scalars['Boolean']['output']>;
   deleteAllEquipments?: Maybe<Scalars['Boolean']['output']>;
@@ -573,8 +574,10 @@ export type Mutation = {
   farmerLogin: Token;
   farmerLogout?: Maybe<Scalars['Boolean']['output']>;
   farmerSignUpAfterInvite: Token;
+  forgotPassword?: Maybe<Scalars['String']['output']>;
   generateQrCodeDataURL: Scalars['String']['output'];
   generateTwoFactorAuthSecret: GenerateTwoFaResponse;
+  resetForgotPassword?: Maybe<Scalars['Boolean']['output']>;
   resolveComplaint?: Maybe<Scalars['Boolean']['output']>;
   turnOnTwoFactorAuth: Scalars['Boolean']['output'];
   updateActivity?: Maybe<Activity>;
@@ -814,6 +817,11 @@ export type MutationDeleteAdminArgs = {
 };
 
 
+export type MutationDeleteAdminInviteArgs = {
+  inviteId: Scalars['String']['input'];
+};
+
+
 export type MutationDeleteCalendarActivityArgs = {
   calendarActivityId: Scalars['String']['input'];
 };
@@ -906,6 +914,17 @@ export type MutationFarmerLoginArgs = {
 
 export type MutationFarmerSignUpAfterInviteArgs = {
   invitePasscode: Scalars['String']['input'];
+};
+
+
+export type MutationForgotPasswordArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+export type MutationResetForgotPasswordArgs = {
+  forgotPasswordId: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 
@@ -1025,6 +1044,8 @@ export type Query = {
   getActivityByCropProfile?: Maybe<Array<Maybe<Activity>>>;
   getActivityById?: Maybe<Activity>;
   getAdminById: Admin;
+  getAdminInviteById?: Maybe<AdminInvite>;
+  getAdminInvites?: Maybe<Array<Maybe<AdminInvite>>>;
   getAdminProfile?: Maybe<Admin>;
   getAdmins?: Maybe<Array<Maybe<Admin>>>;
   getCalendarActivityTemplateById?: Maybe<CalendarActivityTemplate>;
@@ -1083,6 +1104,11 @@ export type QueryGetActivityByCropProfileArgs = {
 
 export type QueryGetActivityByIdArgs = {
   activityId: Scalars['String']['input'];
+};
+
+
+export type QueryGetAdminInviteByIdArgs = {
+  inviteId: Scalars['String']['input'];
 };
 
 
@@ -1345,6 +1371,16 @@ export type Warehouse = {
   updatedAt?: Maybe<Scalars['Date']['output']>;
 };
 
+export type AddActivityToCalendarMutationVariables = Exact<{
+  activityId: Scalars['String']['input'];
+  farmLotId: Scalars['String']['input'];
+  startTime: Scalars['Date']['input'];
+  endTime: Scalars['Date']['input'];
+}>;
+
+
+export type AddActivityToCalendarMutation = { __typename?: 'Mutation', addActivityToFarmCalendar?: boolean | null };
+
 export type AdminLoginMutationVariables = Exact<{
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -1362,17 +1398,143 @@ export type AdminSignUpAfterInviteMutationVariables = Exact<{
 
 export type AdminSignUpAfterInviteMutation = { __typename?: 'Mutation', adminSignUpAfterInvite: { __typename?: 'Token', access_token: string, refresh_token: string } };
 
+export type CreateActivityMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  cost: Scalars['Float']['input'];
+  cropProfileId: Scalars['String']['input'];
+  activityEquipment?: InputMaybe<Array<CreateActivityEquipment> | CreateActivityEquipment>;
+  activityInput?: InputMaybe<Array<CreateActivityInput> | CreateActivityInput>;
+}>;
+
+
+export type CreateActivityMutation = { __typename?: 'Mutation', createActivity?: { __typename?: 'Activity', id?: string | null, name?: string | null, cost?: number | null, totalCost?: number | null } | null };
+
+export type CreateInputMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  cost: Scalars['Float']['input'];
+  inputCategoryId: Scalars['String']['input'];
+  inputUnitId: Scalars['String']['input'];
+}>;
+
+
+export type CreateInputMutation = { __typename?: 'Mutation', createInput?: { __typename?: 'Input', id?: string | null, name?: string | null, cost?: number | null } | null };
+
+export type CreateFarmLotMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  landGroupId: Scalars['String']['input'];
+  coorperativeId: Scalars['String']['input'];
+  geographicAreaId: Scalars['String']['input'];
+  cropProfileId: Scalars['String']['input'];
+}>;
+
+
+export type CreateFarmLotMutation = { __typename?: 'Mutation', createFarmLot?: { __typename?: 'FarmLot', id?: string | null, name?: string | null, landGroupId?: string | null, coorperativeId?: string | null, createdAt?: any | null } | null };
+
 export type GenerateQrCodeDataUrlMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GenerateQrCodeDataUrlMutation = { __typename?: 'Mutation', generateQrCodeDataURL: string };
 
-export type GetRolesQueryVariables = Exact<{ [key: string]: never; }>;
+export type CreateEquipmentMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  costPerDay: Scalars['Float']['input'];
+}>;
 
 
-export type GetRolesQuery = { __typename?: 'Query', getRoles: Array<{ __typename?: 'Role', id?: string | null, roleName?: string | null, archived?: boolean | null, description?: string | null } | null> };
+export type CreateEquipmentMutation = { __typename?: 'Mutation', createEquipment?: { __typename?: 'Equipment', id?: string | null, name?: string | null, costPerDay?: number | null } | null };
+
+export type GetActivitiesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
+export type GetActivitiesQuery = { __typename?: 'Query', getActivities?: Array<{ __typename?: 'Activity', id?: string | null, name?: string | null, updatedAt?: any | null, adminId?: string | null, admin?: { __typename?: 'Admin', fullname?: string | null } | null, cropProfile?: { __typename?: 'CropProfile', cropName?: string | null } | null } | null> | null };
+
+export type GetCropProfilesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCropProfilesQuery = { __typename?: 'Query', getCropProfiles?: Array<{ __typename?: 'CropProfile', id?: string | null, cropName?: string | null, lifeCycle?: string | null } | null> | null };
+
+export type GetEquipmentsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetEquipmentsQuery = { __typename?: 'Query', getEquipments?: Array<{ __typename?: 'Equipment', id?: string | null, name?: string | null, costPerDay?: number | null, createdAt?: any | null } | null> | null };
+
+export type GetInputsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetInputsQuery = { __typename?: 'Query', getInputs?: Array<{ __typename?: 'Input', id?: string | null, name?: string | null, cost?: number | null } | null> | null };
+
+export type GetFarmLotsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFarmLotsQuery = { __typename?: 'Query', getFarmLots: Array<{ __typename?: 'FarmLot', id?: string | null, name?: string | null, archived?: boolean | null, landGroup?: { __typename?: 'LandGroup', id?: string | null, name?: string | null } | null, coorperative?: { __typename?: 'Cooperative', id?: string | null, name?: string | null } | null } | null> };
+
+export type GetFarmerProfilesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetFarmerProfilesQuery = { __typename?: 'Query', getFarmerProfiles: Array<{ __typename?: 'Farmer', name?: string | null, id?: string | null, email?: string | null } | null> };
+
+export type GetGeoAreasQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetGeoAreasQuery = { __typename?: 'Query', getGeoAreas: Array<{ __typename?: 'GeographicArea', id?: string | null, name?: string | null, createdAt?: any | null } | null> };
+
+export type GetGeoCorpsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetGeoCorpsQuery = { __typename?: 'Query', getGeoCorps: Array<{ __typename?: 'Cooperative', id?: string | null, name?: string | null, createdAt?: any | null } | null> };
+
+export type GetInputCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetInputCategoriesQuery = { __typename?: 'Query', getInputCategories?: Array<{ __typename?: 'InputCategory', id?: string | null, name?: string | null } | null> | null };
+
+export type GetLandGroupsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLandGroupsQuery = { __typename?: 'Query', getLandGroups: Array<{ __typename?: 'LandGroup', id?: string | null, name?: string | null, createdAt?: any | null } | null> };
+
+export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUnitsQuery = { __typename?: 'Query', getUnits?: Array<{ __typename?: 'Unit', id?: string | null, unitName?: string | null } | null> | null };
+
+
+export const AddActivityToCalendarDocument = gql`
+    mutation AddActivityToCalendar($activityId: String!, $farmLotId: String!, $startTime: Date!, $endTime: Date!) {
+  addActivityToFarmCalendar(
+    input: {activityId: $activityId, farmLotId: $farmLotId, startTime: $startTime, endTime: $endTime}
+  )
+}
+    `;
+export type AddActivityToCalendarMutationFn = Apollo.MutationFunction<AddActivityToCalendarMutation, AddActivityToCalendarMutationVariables>;
+
+/**
+ * __useAddActivityToCalendarMutation__
+ *
+ * To run a mutation, you first call `useAddActivityToCalendarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddActivityToCalendarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addActivityToCalendarMutation, { data, loading, error }] = useAddActivityToCalendarMutation({
+ *   variables: {
+ *      activityId: // value for 'activityId'
+ *      farmLotId: // value for 'farmLotId'
+ *      startTime: // value for 'startTime'
+ *      endTime: // value for 'endTime'
+ *   },
+ * });
+ */
+export function useAddActivityToCalendarMutation(baseOptions?: Apollo.MutationHookOptions<AddActivityToCalendarMutation, AddActivityToCalendarMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddActivityToCalendarMutation, AddActivityToCalendarMutationVariables>(AddActivityToCalendarDocument, options);
+      }
+export type AddActivityToCalendarMutationHookResult = ReturnType<typeof useAddActivityToCalendarMutation>;
+export type AddActivityToCalendarMutationResult = Apollo.MutationResult<AddActivityToCalendarMutation>;
+export type AddActivityToCalendarMutationOptions = Apollo.BaseMutationOptions<AddActivityToCalendarMutation, AddActivityToCalendarMutationVariables>;
 export const AdminLoginDocument = gql`
     mutation adminLogin($email: String!, $password: String!, $twoFACode: String) {
   adminLogin(input: {email: $email, password: $password, twoFACode: $twoFACode}) {
@@ -1444,6 +1606,131 @@ export function useAdminSignUpAfterInviteMutation(baseOptions?: Apollo.MutationH
 export type AdminSignUpAfterInviteMutationHookResult = ReturnType<typeof useAdminSignUpAfterInviteMutation>;
 export type AdminSignUpAfterInviteMutationResult = Apollo.MutationResult<AdminSignUpAfterInviteMutation>;
 export type AdminSignUpAfterInviteMutationOptions = Apollo.BaseMutationOptions<AdminSignUpAfterInviteMutation, AdminSignUpAfterInviteMutationVariables>;
+export const CreateActivityDocument = gql`
+    mutation CreateActivity($name: String!, $cost: Float!, $cropProfileId: String!, $activityEquipment: [CreateActivityEquipment!], $activityInput: [CreateActivityInput!]) {
+  createActivity(
+    input: {name: $name, cost: $cost, cropProfileId: $cropProfileId, activityEquipment: $activityEquipment, activityInput: $activityInput}
+  ) {
+    id
+    name
+    cost
+    totalCost
+  }
+}
+    `;
+export type CreateActivityMutationFn = Apollo.MutationFunction<CreateActivityMutation, CreateActivityMutationVariables>;
+
+/**
+ * __useCreateActivityMutation__
+ *
+ * To run a mutation, you first call `useCreateActivityMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateActivityMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createActivityMutation, { data, loading, error }] = useCreateActivityMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      cost: // value for 'cost'
+ *      cropProfileId: // value for 'cropProfileId'
+ *      activityEquipment: // value for 'activityEquipment'
+ *      activityInput: // value for 'activityInput'
+ *   },
+ * });
+ */
+export function useCreateActivityMutation(baseOptions?: Apollo.MutationHookOptions<CreateActivityMutation, CreateActivityMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateActivityMutation, CreateActivityMutationVariables>(CreateActivityDocument, options);
+      }
+export type CreateActivityMutationHookResult = ReturnType<typeof useCreateActivityMutation>;
+export type CreateActivityMutationResult = Apollo.MutationResult<CreateActivityMutation>;
+export type CreateActivityMutationOptions = Apollo.BaseMutationOptions<CreateActivityMutation, CreateActivityMutationVariables>;
+export const CreateInputDocument = gql`
+    mutation CreateInput($name: String!, $cost: Float!, $inputCategoryId: String!, $inputUnitId: String!) {
+  createInput(
+    input: {name: $name, cost: $cost, inputCategoryId: $inputCategoryId, inputUnitId: $inputUnitId}
+  ) {
+    id
+    name
+    cost
+  }
+}
+    `;
+export type CreateInputMutationFn = Apollo.MutationFunction<CreateInputMutation, CreateInputMutationVariables>;
+
+/**
+ * __useCreateInputMutation__
+ *
+ * To run a mutation, you first call `useCreateInputMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateInputMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createInputMutation, { data, loading, error }] = useCreateInputMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      cost: // value for 'cost'
+ *      inputCategoryId: // value for 'inputCategoryId'
+ *      inputUnitId: // value for 'inputUnitId'
+ *   },
+ * });
+ */
+export function useCreateInputMutation(baseOptions?: Apollo.MutationHookOptions<CreateInputMutation, CreateInputMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateInputMutation, CreateInputMutationVariables>(CreateInputDocument, options);
+      }
+export type CreateInputMutationHookResult = ReturnType<typeof useCreateInputMutation>;
+export type CreateInputMutationResult = Apollo.MutationResult<CreateInputMutation>;
+export type CreateInputMutationOptions = Apollo.BaseMutationOptions<CreateInputMutation, CreateInputMutationVariables>;
+export const CreateFarmLotDocument = gql`
+    mutation CreateFarmLot($name: String!, $landGroupId: String!, $coorperativeId: String!, $geographicAreaId: String!, $cropProfileId: String!) {
+  createFarmLot(
+    input: {name: $name, landGroupId: $landGroupId, coorperativeId: $coorperativeId, geographicAreaId: $geographicAreaId, cropProfileId: $cropProfileId}
+  ) {
+    id
+    name
+    landGroupId
+    coorperativeId
+    createdAt
+  }
+}
+    `;
+export type CreateFarmLotMutationFn = Apollo.MutationFunction<CreateFarmLotMutation, CreateFarmLotMutationVariables>;
+
+/**
+ * __useCreateFarmLotMutation__
+ *
+ * To run a mutation, you first call `useCreateFarmLotMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFarmLotMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFarmLotMutation, { data, loading, error }] = useCreateFarmLotMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      landGroupId: // value for 'landGroupId'
+ *      coorperativeId: // value for 'coorperativeId'
+ *      geographicAreaId: // value for 'geographicAreaId'
+ *      cropProfileId: // value for 'cropProfileId'
+ *   },
+ * });
+ */
+export function useCreateFarmLotMutation(baseOptions?: Apollo.MutationHookOptions<CreateFarmLotMutation, CreateFarmLotMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateFarmLotMutation, CreateFarmLotMutationVariables>(CreateFarmLotDocument, options);
+      }
+export type CreateFarmLotMutationHookResult = ReturnType<typeof useCreateFarmLotMutation>;
+export type CreateFarmLotMutationResult = Apollo.MutationResult<CreateFarmLotMutation>;
+export type CreateFarmLotMutationOptions = Apollo.BaseMutationOptions<CreateFarmLotMutation, CreateFarmLotMutationVariables>;
 export const GenerateQrCodeDataUrlDocument = gql`
     mutation GenerateQRCodeDataUrl {
   generateQrCodeDataURL
@@ -1474,45 +1761,504 @@ export function useGenerateQrCodeDataUrlMutation(baseOptions?: Apollo.MutationHo
 export type GenerateQrCodeDataUrlMutationHookResult = ReturnType<typeof useGenerateQrCodeDataUrlMutation>;
 export type GenerateQrCodeDataUrlMutationResult = Apollo.MutationResult<GenerateQrCodeDataUrlMutation>;
 export type GenerateQrCodeDataUrlMutationOptions = Apollo.BaseMutationOptions<GenerateQrCodeDataUrlMutation, GenerateQrCodeDataUrlMutationVariables>;
-export const GetRolesDocument = gql`
-    query GetRoles {
-  getRoles {
+export const CreateEquipmentDocument = gql`
+    mutation CreateEquipment($name: String!, $costPerDay: Float!) {
+  createEquipment(input: {name: $name, costPerDay: $costPerDay}) {
     id
-    roleName
-    archived
-    description
+    name
+    costPerDay
+  }
+}
+    `;
+export type CreateEquipmentMutationFn = Apollo.MutationFunction<CreateEquipmentMutation, CreateEquipmentMutationVariables>;
+
+/**
+ * __useCreateEquipmentMutation__
+ *
+ * To run a mutation, you first call `useCreateEquipmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEquipmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createEquipmentMutation, { data, loading, error }] = useCreateEquipmentMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      costPerDay: // value for 'costPerDay'
+ *   },
+ * });
+ */
+export function useCreateEquipmentMutation(baseOptions?: Apollo.MutationHookOptions<CreateEquipmentMutation, CreateEquipmentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateEquipmentMutation, CreateEquipmentMutationVariables>(CreateEquipmentDocument, options);
+      }
+export type CreateEquipmentMutationHookResult = ReturnType<typeof useCreateEquipmentMutation>;
+export type CreateEquipmentMutationResult = Apollo.MutationResult<CreateEquipmentMutation>;
+export type CreateEquipmentMutationOptions = Apollo.BaseMutationOptions<CreateEquipmentMutation, CreateEquipmentMutationVariables>;
+export const GetActivitiesDocument = gql`
+    query GetActivities {
+  getActivities {
+    id
+    name
+    updatedAt
+    adminId
+    admin {
+      fullname
+    }
+    cropProfile {
+      cropName
+    }
   }
 }
     `;
 
 /**
- * __useGetRolesQuery__
+ * __useGetActivitiesQuery__
  *
- * To run a query within a React component, call `useGetRolesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetActivitiesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetActivitiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetRolesQuery({
+ * const { data, loading, error } = useGetActivitiesQuery({
  *   variables: {
  *   },
  * });
  */
-export function useGetRolesQuery(baseOptions?: Apollo.QueryHookOptions<GetRolesQuery, GetRolesQueryVariables>) {
+export function useGetActivitiesQuery(baseOptions?: Apollo.QueryHookOptions<GetActivitiesQuery, GetActivitiesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetRolesQuery, GetRolesQueryVariables>(GetRolesDocument, options);
+        return Apollo.useQuery<GetActivitiesQuery, GetActivitiesQueryVariables>(GetActivitiesDocument, options);
       }
-export function useGetRolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRolesQuery, GetRolesQueryVariables>) {
+export function useGetActivitiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetActivitiesQuery, GetActivitiesQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetRolesQuery, GetRolesQueryVariables>(GetRolesDocument, options);
+          return Apollo.useLazyQuery<GetActivitiesQuery, GetActivitiesQueryVariables>(GetActivitiesDocument, options);
         }
-export function useGetRolesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetRolesQuery, GetRolesQueryVariables>) {
+export function useGetActivitiesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetActivitiesQuery, GetActivitiesQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetRolesQuery, GetRolesQueryVariables>(GetRolesDocument, options);
+          return Apollo.useSuspenseQuery<GetActivitiesQuery, GetActivitiesQueryVariables>(GetActivitiesDocument, options);
         }
-export type GetRolesQueryHookResult = ReturnType<typeof useGetRolesQuery>;
-export type GetRolesLazyQueryHookResult = ReturnType<typeof useGetRolesLazyQuery>;
-export type GetRolesSuspenseQueryHookResult = ReturnType<typeof useGetRolesSuspenseQuery>;
-export type GetRolesQueryResult = Apollo.QueryResult<GetRolesQuery, GetRolesQueryVariables>;
+export type GetActivitiesQueryHookResult = ReturnType<typeof useGetActivitiesQuery>;
+export type GetActivitiesLazyQueryHookResult = ReturnType<typeof useGetActivitiesLazyQuery>;
+export type GetActivitiesSuspenseQueryHookResult = ReturnType<typeof useGetActivitiesSuspenseQuery>;
+export type GetActivitiesQueryResult = Apollo.QueryResult<GetActivitiesQuery, GetActivitiesQueryVariables>;
+export const GetCropProfilesDocument = gql`
+    query GetCropProfiles {
+  getCropProfiles {
+    id
+    cropName
+    lifeCycle
+  }
+}
+    `;
+
+/**
+ * __useGetCropProfilesQuery__
+ *
+ * To run a query within a React component, call `useGetCropProfilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCropProfilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCropProfilesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCropProfilesQuery(baseOptions?: Apollo.QueryHookOptions<GetCropProfilesQuery, GetCropProfilesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCropProfilesQuery, GetCropProfilesQueryVariables>(GetCropProfilesDocument, options);
+      }
+export function useGetCropProfilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCropProfilesQuery, GetCropProfilesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCropProfilesQuery, GetCropProfilesQueryVariables>(GetCropProfilesDocument, options);
+        }
+export function useGetCropProfilesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetCropProfilesQuery, GetCropProfilesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetCropProfilesQuery, GetCropProfilesQueryVariables>(GetCropProfilesDocument, options);
+        }
+export type GetCropProfilesQueryHookResult = ReturnType<typeof useGetCropProfilesQuery>;
+export type GetCropProfilesLazyQueryHookResult = ReturnType<typeof useGetCropProfilesLazyQuery>;
+export type GetCropProfilesSuspenseQueryHookResult = ReturnType<typeof useGetCropProfilesSuspenseQuery>;
+export type GetCropProfilesQueryResult = Apollo.QueryResult<GetCropProfilesQuery, GetCropProfilesQueryVariables>;
+export const GetEquipmentsDocument = gql`
+    query GetEquipments {
+  getEquipments {
+    id
+    name
+    costPerDay
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetEquipmentsQuery__
+ *
+ * To run a query within a React component, call `useGetEquipmentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEquipmentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEquipmentsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetEquipmentsQuery(baseOptions?: Apollo.QueryHookOptions<GetEquipmentsQuery, GetEquipmentsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetEquipmentsQuery, GetEquipmentsQueryVariables>(GetEquipmentsDocument, options);
+      }
+export function useGetEquipmentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEquipmentsQuery, GetEquipmentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetEquipmentsQuery, GetEquipmentsQueryVariables>(GetEquipmentsDocument, options);
+        }
+export function useGetEquipmentsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetEquipmentsQuery, GetEquipmentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetEquipmentsQuery, GetEquipmentsQueryVariables>(GetEquipmentsDocument, options);
+        }
+export type GetEquipmentsQueryHookResult = ReturnType<typeof useGetEquipmentsQuery>;
+export type GetEquipmentsLazyQueryHookResult = ReturnType<typeof useGetEquipmentsLazyQuery>;
+export type GetEquipmentsSuspenseQueryHookResult = ReturnType<typeof useGetEquipmentsSuspenseQuery>;
+export type GetEquipmentsQueryResult = Apollo.QueryResult<GetEquipmentsQuery, GetEquipmentsQueryVariables>;
+export const GetInputsDocument = gql`
+    query GetInputs {
+  getInputs {
+    id
+    name
+    cost
+  }
+}
+    `;
+
+/**
+ * __useGetInputsQuery__
+ *
+ * To run a query within a React component, call `useGetInputsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInputsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetInputsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetInputsQuery(baseOptions?: Apollo.QueryHookOptions<GetInputsQuery, GetInputsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetInputsQuery, GetInputsQueryVariables>(GetInputsDocument, options);
+      }
+export function useGetInputsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInputsQuery, GetInputsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetInputsQuery, GetInputsQueryVariables>(GetInputsDocument, options);
+        }
+export function useGetInputsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetInputsQuery, GetInputsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetInputsQuery, GetInputsQueryVariables>(GetInputsDocument, options);
+        }
+export type GetInputsQueryHookResult = ReturnType<typeof useGetInputsQuery>;
+export type GetInputsLazyQueryHookResult = ReturnType<typeof useGetInputsLazyQuery>;
+export type GetInputsSuspenseQueryHookResult = ReturnType<typeof useGetInputsSuspenseQuery>;
+export type GetInputsQueryResult = Apollo.QueryResult<GetInputsQuery, GetInputsQueryVariables>;
+export const GetFarmLotsDocument = gql`
+    query GetFarmLots {
+  getFarmLots {
+    id
+    name
+    landGroup {
+      id
+      name
+    }
+    coorperative {
+      id
+      name
+    }
+    archived
+  }
+}
+    `;
+
+/**
+ * __useGetFarmLotsQuery__
+ *
+ * To run a query within a React component, call `useGetFarmLotsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFarmLotsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFarmLotsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetFarmLotsQuery(baseOptions?: Apollo.QueryHookOptions<GetFarmLotsQuery, GetFarmLotsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFarmLotsQuery, GetFarmLotsQueryVariables>(GetFarmLotsDocument, options);
+      }
+export function useGetFarmLotsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFarmLotsQuery, GetFarmLotsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFarmLotsQuery, GetFarmLotsQueryVariables>(GetFarmLotsDocument, options);
+        }
+export function useGetFarmLotsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetFarmLotsQuery, GetFarmLotsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetFarmLotsQuery, GetFarmLotsQueryVariables>(GetFarmLotsDocument, options);
+        }
+export type GetFarmLotsQueryHookResult = ReturnType<typeof useGetFarmLotsQuery>;
+export type GetFarmLotsLazyQueryHookResult = ReturnType<typeof useGetFarmLotsLazyQuery>;
+export type GetFarmLotsSuspenseQueryHookResult = ReturnType<typeof useGetFarmLotsSuspenseQuery>;
+export type GetFarmLotsQueryResult = Apollo.QueryResult<GetFarmLotsQuery, GetFarmLotsQueryVariables>;
+export const GetFarmerProfilesDocument = gql`
+    query GetFarmerProfiles {
+  getFarmerProfiles {
+    name
+    id
+    email
+  }
+}
+    `;
+
+/**
+ * __useGetFarmerProfilesQuery__
+ *
+ * To run a query within a React component, call `useGetFarmerProfilesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFarmerProfilesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFarmerProfilesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetFarmerProfilesQuery(baseOptions?: Apollo.QueryHookOptions<GetFarmerProfilesQuery, GetFarmerProfilesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFarmerProfilesQuery, GetFarmerProfilesQueryVariables>(GetFarmerProfilesDocument, options);
+      }
+export function useGetFarmerProfilesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFarmerProfilesQuery, GetFarmerProfilesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFarmerProfilesQuery, GetFarmerProfilesQueryVariables>(GetFarmerProfilesDocument, options);
+        }
+export function useGetFarmerProfilesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetFarmerProfilesQuery, GetFarmerProfilesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetFarmerProfilesQuery, GetFarmerProfilesQueryVariables>(GetFarmerProfilesDocument, options);
+        }
+export type GetFarmerProfilesQueryHookResult = ReturnType<typeof useGetFarmerProfilesQuery>;
+export type GetFarmerProfilesLazyQueryHookResult = ReturnType<typeof useGetFarmerProfilesLazyQuery>;
+export type GetFarmerProfilesSuspenseQueryHookResult = ReturnType<typeof useGetFarmerProfilesSuspenseQuery>;
+export type GetFarmerProfilesQueryResult = Apollo.QueryResult<GetFarmerProfilesQuery, GetFarmerProfilesQueryVariables>;
+export const GetGeoAreasDocument = gql`
+    query GetGeoAreas {
+  getGeoAreas {
+    id
+    name
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetGeoAreasQuery__
+ *
+ * To run a query within a React component, call `useGetGeoAreasQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGeoAreasQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGeoAreasQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetGeoAreasQuery(baseOptions?: Apollo.QueryHookOptions<GetGeoAreasQuery, GetGeoAreasQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGeoAreasQuery, GetGeoAreasQueryVariables>(GetGeoAreasDocument, options);
+      }
+export function useGetGeoAreasLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGeoAreasQuery, GetGeoAreasQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGeoAreasQuery, GetGeoAreasQueryVariables>(GetGeoAreasDocument, options);
+        }
+export function useGetGeoAreasSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetGeoAreasQuery, GetGeoAreasQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetGeoAreasQuery, GetGeoAreasQueryVariables>(GetGeoAreasDocument, options);
+        }
+export type GetGeoAreasQueryHookResult = ReturnType<typeof useGetGeoAreasQuery>;
+export type GetGeoAreasLazyQueryHookResult = ReturnType<typeof useGetGeoAreasLazyQuery>;
+export type GetGeoAreasSuspenseQueryHookResult = ReturnType<typeof useGetGeoAreasSuspenseQuery>;
+export type GetGeoAreasQueryResult = Apollo.QueryResult<GetGeoAreasQuery, GetGeoAreasQueryVariables>;
+export const GetGeoCorpsDocument = gql`
+    query GetGeoCorps {
+  getGeoCorps {
+    id
+    name
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetGeoCorpsQuery__
+ *
+ * To run a query within a React component, call `useGetGeoCorpsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGeoCorpsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGeoCorpsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetGeoCorpsQuery(baseOptions?: Apollo.QueryHookOptions<GetGeoCorpsQuery, GetGeoCorpsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGeoCorpsQuery, GetGeoCorpsQueryVariables>(GetGeoCorpsDocument, options);
+      }
+export function useGetGeoCorpsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGeoCorpsQuery, GetGeoCorpsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGeoCorpsQuery, GetGeoCorpsQueryVariables>(GetGeoCorpsDocument, options);
+        }
+export function useGetGeoCorpsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetGeoCorpsQuery, GetGeoCorpsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetGeoCorpsQuery, GetGeoCorpsQueryVariables>(GetGeoCorpsDocument, options);
+        }
+export type GetGeoCorpsQueryHookResult = ReturnType<typeof useGetGeoCorpsQuery>;
+export type GetGeoCorpsLazyQueryHookResult = ReturnType<typeof useGetGeoCorpsLazyQuery>;
+export type GetGeoCorpsSuspenseQueryHookResult = ReturnType<typeof useGetGeoCorpsSuspenseQuery>;
+export type GetGeoCorpsQueryResult = Apollo.QueryResult<GetGeoCorpsQuery, GetGeoCorpsQueryVariables>;
+export const GetInputCategoriesDocument = gql`
+    query GetInputCategories {
+  getInputCategories {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetInputCategoriesQuery__
+ *
+ * To run a query within a React component, call `useGetInputCategoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInputCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetInputCategoriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetInputCategoriesQuery(baseOptions?: Apollo.QueryHookOptions<GetInputCategoriesQuery, GetInputCategoriesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetInputCategoriesQuery, GetInputCategoriesQueryVariables>(GetInputCategoriesDocument, options);
+      }
+export function useGetInputCategoriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInputCategoriesQuery, GetInputCategoriesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetInputCategoriesQuery, GetInputCategoriesQueryVariables>(GetInputCategoriesDocument, options);
+        }
+export function useGetInputCategoriesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetInputCategoriesQuery, GetInputCategoriesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetInputCategoriesQuery, GetInputCategoriesQueryVariables>(GetInputCategoriesDocument, options);
+        }
+export type GetInputCategoriesQueryHookResult = ReturnType<typeof useGetInputCategoriesQuery>;
+export type GetInputCategoriesLazyQueryHookResult = ReturnType<typeof useGetInputCategoriesLazyQuery>;
+export type GetInputCategoriesSuspenseQueryHookResult = ReturnType<typeof useGetInputCategoriesSuspenseQuery>;
+export type GetInputCategoriesQueryResult = Apollo.QueryResult<GetInputCategoriesQuery, GetInputCategoriesQueryVariables>;
+export const GetLandGroupsDocument = gql`
+    query GetLandGroups {
+  getLandGroups {
+    id
+    name
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetLandGroupsQuery__
+ *
+ * To run a query within a React component, call `useGetLandGroupsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLandGroupsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLandGroupsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetLandGroupsQuery(baseOptions?: Apollo.QueryHookOptions<GetLandGroupsQuery, GetLandGroupsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLandGroupsQuery, GetLandGroupsQueryVariables>(GetLandGroupsDocument, options);
+      }
+export function useGetLandGroupsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLandGroupsQuery, GetLandGroupsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLandGroupsQuery, GetLandGroupsQueryVariables>(GetLandGroupsDocument, options);
+        }
+export function useGetLandGroupsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLandGroupsQuery, GetLandGroupsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLandGroupsQuery, GetLandGroupsQueryVariables>(GetLandGroupsDocument, options);
+        }
+export type GetLandGroupsQueryHookResult = ReturnType<typeof useGetLandGroupsQuery>;
+export type GetLandGroupsLazyQueryHookResult = ReturnType<typeof useGetLandGroupsLazyQuery>;
+export type GetLandGroupsSuspenseQueryHookResult = ReturnType<typeof useGetLandGroupsSuspenseQuery>;
+export type GetLandGroupsQueryResult = Apollo.QueryResult<GetLandGroupsQuery, GetLandGroupsQueryVariables>;
+export const GetUnitsDocument = gql`
+    query GetUnits {
+  getUnits {
+    id
+    unitName
+  }
+}
+    `;
+
+/**
+ * __useGetUnitsQuery__
+ *
+ * To run a query within a React component, call `useGetUnitsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUnitsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUnitsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUnitsQuery(baseOptions?: Apollo.QueryHookOptions<GetUnitsQuery, GetUnitsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUnitsQuery, GetUnitsQueryVariables>(GetUnitsDocument, options);
+      }
+export function useGetUnitsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUnitsQuery, GetUnitsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUnitsQuery, GetUnitsQueryVariables>(GetUnitsDocument, options);
+        }
+export function useGetUnitsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUnitsQuery, GetUnitsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUnitsQuery, GetUnitsQueryVariables>(GetUnitsDocument, options);
+        }
+export type GetUnitsQueryHookResult = ReturnType<typeof useGetUnitsQuery>;
+export type GetUnitsLazyQueryHookResult = ReturnType<typeof useGetUnitsLazyQuery>;
+export type GetUnitsSuspenseQueryHookResult = ReturnType<typeof useGetUnitsSuspenseQuery>;
+export type GetUnitsQueryResult = Apollo.QueryResult<GetUnitsQuery, GetUnitsQueryVariables>;

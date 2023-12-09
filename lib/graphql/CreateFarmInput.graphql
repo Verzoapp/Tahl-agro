@@ -1,0 +1,12 @@
+mutation CreateInput($name: String!, $cost: Float!, $inputCategoryId: String!, $inputUnitId: String!){
+  createInput(input:{
+    name:$name
+    cost:$cost
+    inputCategoryId:$inputCategoryId
+    inputUnitId:$inputUnitId
+  }){
+    id
+    name
+    cost
+  }
+}

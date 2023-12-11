@@ -1,0 +1,7 @@
+mutation CreateGeoArea($name: String!){
+  createGeoArea(name:$name){
+    id
+    name
+    createdAt
+  }
+}

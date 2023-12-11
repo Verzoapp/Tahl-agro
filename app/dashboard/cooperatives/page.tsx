@@ -1,75 +1,14 @@
+"use client"
+import AddCooperativeModal from "@/components/modals/addCooperativeModal";
+import { useGetFarmLotsQuery, useGetGeoCorpsQuery } from "@/src/generated/graphql";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import React from "react";
-
-const people = [
-  {
-    name: "Cooperative A",
-    geoarea: "Kogi west",
-    noofmembers: "12",
-    landgroup: "land group A",
-    image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    name: "Cooperative B",
-    geoarea: "Kogi west",
-    landgroup: "land group B",
-    noofmembers: "11",
-    image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    name: "Cooperative C",
-    geoarea: "Kogi west",
-    landgroup: "land group C",
-    noofmembers: "17",
-    image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    name: "Cooperative D",
-    geoarea: "Kogi west",
-    landgroup: "land group D",
-    noofmembers: "18",
-    image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    name: "Cooperative E",
-    geoarea: "Kogi west",
-    landgroup: "land group E",
-    noofmembers: "10",
-    image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    name: "Cooperative F",
-    geoarea: "Kogi west",
-    landgroup: "land group F",
-    noofmembers: "20",
-    image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    name: "Cooperative G",
-    geoarea: "Kogi west",
-    landgroup: "Unassigned",
-    noofmembers: "2",
-    image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    name: "Cooperative H",
-    geoarea: "Kogi west",
-    landgroup: "land group H",
-    noofmembers: "4",
-    image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  // More people...
-];
+import { useState } from "react";
 
 const Cooperatives = () => {
+  const [openAddCooperativeModal, setOpenCooperativeModal] = useState(false);
+  const getGeoCorps = useGetGeoCorpsQuery()
+  const geoCorpList = getGeoCorps.data?.getGeoCorps
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between space-y-2">
@@ -81,6 +20,7 @@ const Cooperatives = () => {
           <button
             type="button"
             className="inline-flex items-center rounded border border-transparent bg-[#2aa249] px-4 py-[6px] text-sm font-normal text-white hover:bg-primary-verzobluehover focus:outline-none"
+            onClick={() => setOpenCooperativeModal(true)}
           >
             Create new
           </button>
@@ -96,62 +36,54 @@ const Cooperatives = () => {
                     scope="col"
                     className="py-3.5 pl-4 pr-3 text-left text-sm font-medium tracking-tight text-gray-600"
                   >
-                    Name
+                    Cooperatives
                   </th>
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-medium tracking-tight text-gray-600"
                   >
-                    Geographic Area
+                    Land Group
                   </th>
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-medium tracking-tight text-gray-600"
                   >
-                    Land group
+                    Number Of Farm Lots
                   </th>
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-medium tracking-tight text-gray-600"
                   >
-                    Number of farmers
-                  </th>
-                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                    <span className="sr-only">Edit</span>
+                    Geographical Area
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {people.map((person) => (
-                  <tr key={person.name}>
+                {geoCorpList?.map((item) => (
+                  <tr key={item?.id}>
                     <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
                       <div className="flex items-center">
                         <div className="ml-4">
                           <div className="font-normal tracking-tight text-gray-600">
-                            {person.name}
+                            {item?.name}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-700">
                       <div className="font-normal tracking-tight text-gray-600">
-                        {person.geoarea}
+                        {item?.landGroup !== null ? item?.landGroup?.name : "No land group"}
                       </div>
                     </td>
-                    <td className="whitespace-nowrap capitalize px-3 py-5 text-sm font-normal tracking-tight text-gray-600">
-                      {person.landgroup}
+                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-700">
+                      <div className="font-normal tracking-tight text-gray-600">
+                        {item?.farmLots?.length}
+                      </div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-5 text-sm font-normal tracking-tight text-gray-600">
-                      {person.noofmembers}
-                    </td>
-                    <td className="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-normal tracking-tight text-gray-600 sm:pr-0">
-                      <a
-                        href="#"
-                        className="text-[#2aa249] hover:text-[#2aa249] font-normal"
-                      >
-                        <span className="sr-only">, {person.name}</span>
-                        View
-                      </a>
+                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-700">
+                      <div className="font-normal tracking-tight text-gray-600">
+                        {item?.geographicArea?.name}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -160,6 +92,7 @@ const Cooperatives = () => {
           </div>
         </div>
       </div>
+      <AddCooperativeModal openAddCooperativeModal={openAddCooperativeModal} setOpenAddCooperativeModal={setOpenCooperativeModal} />
     </div>
   );
 };

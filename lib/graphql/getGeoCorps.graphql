@@ -3,5 +3,15 @@ query GetGeoCorps{
     id
     name
     createdAt
+    farmLots{
+      name
+    }
+    geographicArea{
+      name
+    }
+    landGroup{
+      name
+    }
+    
   }
 }

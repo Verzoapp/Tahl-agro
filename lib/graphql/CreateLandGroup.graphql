@@ -1,0 +1,10 @@
+mutation CreateLandGroup($name: String!, $geographicAreaId: String!){
+  createLandGroup(input:{
+    name:$name
+    geographicAreaId:$geographicAreaId
+  }){
+    id
+    name
+    createdAt
+  }
+}

@@ -1430,6 +1430,30 @@ export type CreateFarmLotMutationVariables = Exact<{
 
 export type CreateFarmLotMutation = { __typename?: 'Mutation', createFarmLot?: { __typename?: 'FarmLot', id?: string | null, name?: string | null, landGroupId?: string | null, coorperativeId?: string | null, createdAt?: any | null } | null };
 
+export type CreateGeoAreaMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+}>;
+
+
+export type CreateGeoAreaMutation = { __typename?: 'Mutation', createGeoArea?: { __typename?: 'GeographicArea', id?: string | null, name?: string | null, createdAt?: any | null } | null };
+
+export type CreateGeoCorpMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  geographicAreaId: Scalars['String']['input'];
+  landGroupId: Scalars['String']['input'];
+}>;
+
+
+export type CreateGeoCorpMutation = { __typename?: 'Mutation', createGeoCorp?: { __typename?: 'Cooperative', id?: string | null, name?: string | null, geographicAreaId?: string | null, createdAt?: any | null } | null };
+
+export type CreateLandGroupMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  geographicAreaId: Scalars['String']['input'];
+}>;
+
+
+export type CreateLandGroupMutation = { __typename?: 'Mutation', createLandGroup?: { __typename?: 'LandGroup', id?: string | null, name?: string | null, createdAt?: any | null } | null };
+
 export type GenerateQrCodeDataUrlMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1481,7 +1505,7 @@ export type GetGeoAreasQuery = { __typename?: 'Query', getGeoAreas: Array<{ __ty
 export type GetGeoCorpsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetGeoCorpsQuery = { __typename?: 'Query', getGeoCorps: Array<{ __typename?: 'Cooperative', id?: string | null, name?: string | null, createdAt?: any | null } | null> };
+export type GetGeoCorpsQuery = { __typename?: 'Query', getGeoCorps: Array<{ __typename?: 'Cooperative', id?: string | null, name?: string | null, createdAt?: any | null, farmLots?: Array<{ __typename?: 'FarmLot', name?: string | null } | null> | null, geographicArea?: { __typename?: 'GeographicArea', name?: string | null } | null, landGroup?: { __typename?: 'LandGroup', name?: string | null } | null } | null> };
 
 export type GetInputCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1491,7 +1515,7 @@ export type GetInputCategoriesQuery = { __typename?: 'Query', getInputCategories
 export type GetLandGroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetLandGroupsQuery = { __typename?: 'Query', getLandGroups: Array<{ __typename?: 'LandGroup', id?: string | null, name?: string | null, createdAt?: any | null } | null> };
+export type GetLandGroupsQuery = { __typename?: 'Query', getLandGroups: Array<{ __typename?: 'LandGroup', id?: string | null, name?: string | null, createdAt?: any | null, geographicArea?: { __typename?: 'GeographicArea', name?: string | null, id?: string | null } | null, coorperative?: { __typename?: 'Cooperative', name?: string | null } | null } | null> };
 
 export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1731,6 +1755,117 @@ export function useCreateFarmLotMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateFarmLotMutationHookResult = ReturnType<typeof useCreateFarmLotMutation>;
 export type CreateFarmLotMutationResult = Apollo.MutationResult<CreateFarmLotMutation>;
 export type CreateFarmLotMutationOptions = Apollo.BaseMutationOptions<CreateFarmLotMutation, CreateFarmLotMutationVariables>;
+export const CreateGeoAreaDocument = gql`
+    mutation CreateGeoArea($name: String!) {
+  createGeoArea(name: $name) {
+    id
+    name
+    createdAt
+  }
+}
+    `;
+export type CreateGeoAreaMutationFn = Apollo.MutationFunction<CreateGeoAreaMutation, CreateGeoAreaMutationVariables>;
+
+/**
+ * __useCreateGeoAreaMutation__
+ *
+ * To run a mutation, you first call `useCreateGeoAreaMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateGeoAreaMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createGeoAreaMutation, { data, loading, error }] = useCreateGeoAreaMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateGeoAreaMutation(baseOptions?: Apollo.MutationHookOptions<CreateGeoAreaMutation, CreateGeoAreaMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateGeoAreaMutation, CreateGeoAreaMutationVariables>(CreateGeoAreaDocument, options);
+      }
+export type CreateGeoAreaMutationHookResult = ReturnType<typeof useCreateGeoAreaMutation>;
+export type CreateGeoAreaMutationResult = Apollo.MutationResult<CreateGeoAreaMutation>;
+export type CreateGeoAreaMutationOptions = Apollo.BaseMutationOptions<CreateGeoAreaMutation, CreateGeoAreaMutationVariables>;
+export const CreateGeoCorpDocument = gql`
+    mutation CreateGeoCorp($name: String!, $geographicAreaId: String!, $landGroupId: String!) {
+  createGeoCorp(
+    input: {name: $name, geographicAreaId: $geographicAreaId, landGroupId: $landGroupId}
+  ) {
+    id
+    name
+    geographicAreaId
+    createdAt
+  }
+}
+    `;
+export type CreateGeoCorpMutationFn = Apollo.MutationFunction<CreateGeoCorpMutation, CreateGeoCorpMutationVariables>;
+
+/**
+ * __useCreateGeoCorpMutation__
+ *
+ * To run a mutation, you first call `useCreateGeoCorpMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateGeoCorpMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createGeoCorpMutation, { data, loading, error }] = useCreateGeoCorpMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      geographicAreaId: // value for 'geographicAreaId'
+ *      landGroupId: // value for 'landGroupId'
+ *   },
+ * });
+ */
+export function useCreateGeoCorpMutation(baseOptions?: Apollo.MutationHookOptions<CreateGeoCorpMutation, CreateGeoCorpMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateGeoCorpMutation, CreateGeoCorpMutationVariables>(CreateGeoCorpDocument, options);
+      }
+export type CreateGeoCorpMutationHookResult = ReturnType<typeof useCreateGeoCorpMutation>;
+export type CreateGeoCorpMutationResult = Apollo.MutationResult<CreateGeoCorpMutation>;
+export type CreateGeoCorpMutationOptions = Apollo.BaseMutationOptions<CreateGeoCorpMutation, CreateGeoCorpMutationVariables>;
+export const CreateLandGroupDocument = gql`
+    mutation CreateLandGroup($name: String!, $geographicAreaId: String!) {
+  createLandGroup(input: {name: $name, geographicAreaId: $geographicAreaId}) {
+    id
+    name
+    createdAt
+  }
+}
+    `;
+export type CreateLandGroupMutationFn = Apollo.MutationFunction<CreateLandGroupMutation, CreateLandGroupMutationVariables>;
+
+/**
+ * __useCreateLandGroupMutation__
+ *
+ * To run a mutation, you first call `useCreateLandGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateLandGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createLandGroupMutation, { data, loading, error }] = useCreateLandGroupMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      geographicAreaId: // value for 'geographicAreaId'
+ *   },
+ * });
+ */
+export function useCreateLandGroupMutation(baseOptions?: Apollo.MutationHookOptions<CreateLandGroupMutation, CreateLandGroupMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateLandGroupMutation, CreateLandGroupMutationVariables>(CreateLandGroupDocument, options);
+      }
+export type CreateLandGroupMutationHookResult = ReturnType<typeof useCreateLandGroupMutation>;
+export type CreateLandGroupMutationResult = Apollo.MutationResult<CreateLandGroupMutation>;
+export type CreateLandGroupMutationOptions = Apollo.BaseMutationOptions<CreateLandGroupMutation, CreateLandGroupMutationVariables>;
 export const GenerateQrCodeDataUrlDocument = gql`
     mutation GenerateQRCodeDataUrl {
   generateQrCodeDataURL
@@ -2106,6 +2241,15 @@ export const GetGeoCorpsDocument = gql`
     id
     name
     createdAt
+    farmLots {
+      name
+    }
+    geographicArea {
+      name
+    }
+    landGroup {
+      name
+    }
   }
 }
     `;
@@ -2187,6 +2331,13 @@ export const GetLandGroupsDocument = gql`
     id
     name
     createdAt
+    geographicArea {
+      name
+      id
+    }
+    coorperative {
+      name
+    }
   }
 }
     `;

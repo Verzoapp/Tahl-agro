@@ -1,0 +1,12 @@
+mutation CreateGeoCorp($name: String!, $geographicAreaId: String!, $landGroupId: String!){
+  createGeoCorp(input:{
+    name:$name
+    geographicAreaId:$geographicAreaId
+    landGroupId:$landGroupId
+  }){
+    id
+    name
+    geographicAreaId
+    createdAt
+  }
+}

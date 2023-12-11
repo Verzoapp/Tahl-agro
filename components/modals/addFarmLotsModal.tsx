@@ -291,7 +291,7 @@ const AddFarmLotsModal = ({
                                   value={item?.id!}
                                   onSelect={(currentValue) => {
                                     setCropProfileId(currentValue)
-                                    setOpenGeoAreaDropDown(false)
+                                    setOpenCropProfileDropDown(false)
                                   }}
                                 >
                                   {item?.cropName}

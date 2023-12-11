@@ -3,5 +3,12 @@ query GetLandGroups{
     id
     name
     createdAt
+    geographicArea{
+      name
+      id
+    }
+    coorperative{
+      name
+    }
   }
 }

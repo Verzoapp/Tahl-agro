@@ -1,29 +1,24 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   CalendarIcon,
-  ExclamationTriangleIcon,
 } from "@heroicons/react/24/outline";
 
-interface Activity {
-  id: string;
-  name: string ;
-  updatedAt: any;
-  cropProfile:{
-    cropName: String
+interface CalendarActivity {
+  farmLotname: string;
+  calendarActivity: {
+    activity: {
+      name: string;
+    };
+    startTime: string;
+    endTime: string;
   };
-  adminId: string;
-  admin: {
-    __typename?: 'Admin';
-    fullname?: string;
-    // Add more properties if needed
-  }
 }
 
 interface AddTaskModalProps {
   openDailyTasksModal: boolean;
   setOpenDailyTasksModal: React.Dispatch<React.SetStateAction<boolean>>;
-  activity: Activity[]
+  activity: CalendarActivity[]
 }
 
 
@@ -73,10 +68,10 @@ const DailyTasksModal = ({
                   className="divide-y divide-gray-100 h-[550px] overflow-y-auto"
                 >
                   {
-                    activity.length > 0 ? (
-                      activity.map((item) => (
+                    activity?.length > 0 ? (
+                      activity.map((item, index) => (
                         <li
-                          key={item.id}
+                          key={index}
                           className="relative py-5 hover:bg-gray-50"
                         >
                           <div className="px-4 sm:px-6 lg:px-8">
@@ -86,9 +81,9 @@ const DailyTasksModal = ({
                                   <p className="text-sm font-medium leading-6 text-gray-600 tracking-tight">
                                     <a className=" flex items-center">
                                       <span className="absolute inset-x-0 -top-px bottom-0" />
-                                        Farmer Name
+                                      {item.farmLotname}
                                       <span className="inline-flex capitalize ml-[9px] flex-shrink-0 items-center rounded-full bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                                        farmer
+                                        farm Lot
                                       </span>
                                     </a>
                                   </p>
@@ -102,7 +97,7 @@ const DailyTasksModal = ({
                               <div className="flex items-center gap-x-4">
                                 <div className="hidden sm:flex sm:flex-col sm:items-end">
                                   <p className="text-sm leading-6 text-gray-600 tracking-tight">
-                                    {item.name}
+                                    {item.calendarActivity.activity.name}
                                   </p>
                                   <div className="flex space-x-3 items-center text-gray-500 tracking-tight text-[13px] mt-1">
                                     <dt className="mt-0.5">
@@ -113,8 +108,8 @@ const DailyTasksModal = ({
                                       />
                                     </dt>
                                     <dd>
-                                      <time dateTime={new Date(item.updatedAt).toISOString()}>
-                                        {new Date(item.updatedAt).toLocaleString()} {/* Display the current date and time */}
+                                      <time dateTime={new Date(item.calendarActivity.startTime).toISOString()}>
+                                        {new Date(item.calendarActivity.startTime).toLocaleString()} {/* Display the current date and time */}
                                       </time>
                                     </dd>
                                   </div>

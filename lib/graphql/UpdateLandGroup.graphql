@@ -1,0 +1,12 @@
+mutation UpdateLandGroup($landGroupId: String!,$name: String, $geographicAreaId: String, $archived: Boolean){
+  updateLandGroup(landGroupId:$landGroupId, input:{
+    name:$name
+    geographicAreaId:$geographicAreaId
+    archived:$archived
+  }){
+    id
+    name
+    createdAt
+    updatedAt
+  }
+}

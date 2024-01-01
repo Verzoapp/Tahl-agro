@@ -1,5 +1,7 @@
 "use client"
 import AddLandGroupModal from "@/components/modals/addLandGroupModal";
+import DeleteLandGroupModal from "@/components/modals/deleteLandGroupModal";
+import UpdateLandGroupModal from "@/components/modals/updateLandGroupModal";
 import { useGetLandGroupsQuery } from "@/src/generated/graphql";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import React from "react";
@@ -7,6 +9,12 @@ import { useState } from "react";
 
 const Cooperatives = () => {
   const [openAddLandGroupModal, setOpenAddLandGroupModal] = useState(false)
+  const [openDeleteLandGroupModal, setOpenDeleteLandGroupModal] = useState(false)
+  const [openUpdateGroupModal, setOpenUpdateLandGroupModal] = useState(false)
+  const [geoAreaDefaultId, setGeoAreaDefaultId] = useState("")
+  const [geoAreaDefaultName, setGeoAreaDefaultName] = useState("")
+  const [landGroupDefaultName, setLandGroupDefaultName] = useState("")
+  const [landGroupId, setLandGroupId] = useState("")
   const getLandGroups = useGetLandGroupsQuery()
   const landList = getLandGroups.data?.getLandGroups
   return (
@@ -84,6 +92,16 @@ const Cooperatives = () => {
                           {formattedDate}
                         </div>
                       </td>
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-700">
+                        <button onClick={() => {setOpenUpdateLandGroupModal(true); setLandGroupId(item?.id!); setLandGroupDefaultName(item?.name!); setGeoAreaDefaultId(item?.geographicArea?.id!), setGeoAreaDefaultName(item?.geographicArea?.name!)}} type="button" className="font-normal tracking-tight text-[#2aa249]">
+                          Update
+                        </button>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-700">
+                        <button onClick={() => {setOpenDeleteLandGroupModal(true); setLandGroupId(item?.id!)}} type="button" className="font-normal tracking-tight text-red-700">
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   )
                 })}
@@ -93,6 +111,8 @@ const Cooperatives = () => {
         </div>
       </div>
       <AddLandGroupModal openAddLandGroupModal={openAddLandGroupModal} setOpenLandGroupModal={setOpenAddLandGroupModal} />
+      <UpdateLandGroupModal openUpdateLandGroupModal={openUpdateGroupModal} setOpenUpdateLandGroupModal={setOpenUpdateLandGroupModal} landGroupDefaultId={landGroupId} landGroupDefaultName={landGroupDefaultName} geoAreaDefaultId={geoAreaDefaultId} geoAreaDefaultName={geoAreaDefaultName} />
+      <DeleteLandGroupModal openDeleteLandGroupModal={openDeleteLandGroupModal} setOpenDeleteLandGroupModal={setOpenDeleteLandGroupModal} landGroupId={landGroupId}/>
     </div>
   );
 };

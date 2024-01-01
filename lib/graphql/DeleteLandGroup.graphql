@@ -1,0 +1,3 @@
+mutation DeleteLandGroup($landGroupId: String!){
+  deleteLandGroup(landGroupId:$landGroupId)
+}

@@ -1,0 +1,17 @@
+mutation UpdateFarmLot($farmLotId: String!, $name: String, $landGroupId: String, $coorperativeId: String, $geographicAreaId: String){
+  updateFarmLot(farmLotId:$farmLotId, input:{
+    name:$name
+    landGroupId:$landGroupId
+    coorperativeId:$coorperativeId
+    geographicAreaId:$geographicAreaId
+  }){
+    id
+    name
+    landGroupId
+    geographicAreaId
+    coorperativeId
+    archived
+    createdAt
+    updatedAt
+  }
+}

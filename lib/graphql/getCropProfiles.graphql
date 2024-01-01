@@ -3,5 +3,6 @@ query GetCropProfiles {
     id
     cropName
     lifeCycle
+    createdAt
   }
 }

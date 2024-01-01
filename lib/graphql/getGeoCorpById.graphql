@@ -1,0 +1,17 @@
+query GetGeoCorpById($geoCorpId: String!){
+  getGeoCorpById(geoCorpId:$geoCorpId){
+    id
+    name
+    archived
+    createdAt
+    landGroup{
+      name
+      id
+    }
+    geographicArea{
+      name
+      id
+    }
+    
+  }
+}

@@ -1,0 +1,7 @@
+query GetFarmLotByLandGroup($landGroupId: String!){
+  getFarmLotByLandGroup(landGroupId:$landGroupId){
+    id
+    name
+    archived
+  }
+}

@@ -1,0 +1,3 @@
+mutation DeleteGeoCorp($geoCorpId: String!){
+  deleteGeoCorp(geoCorpId:$geoCorpId)
+}

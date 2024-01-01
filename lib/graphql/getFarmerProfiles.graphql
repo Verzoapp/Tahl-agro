@@ -2,6 +2,8 @@ query GetFarmerProfiles {
   getFarmerProfiles{
     name
     id
-    email
+    farmLots{
+      name
+    }
   }
 }

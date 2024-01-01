@@ -2,14 +2,33 @@ import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
+
+
+interface ActivityDetails {
+  farmLotname: string;
+  calendarActivity: {
+    activity: {
+      name: string;
+    };
+    startTime: string;
+    endTime: string;
+  };
+}
+
 interface ViewTaskModalProps {
   openViewTaskModal: boolean;
   setOpenViewTaskModal: React.Dispatch<React.SetStateAction<boolean>>;
+  activityDetails: ActivityDetails | undefined;
+  cooperative: string
 }
+
 
 const ViewTaskModal = ({
   openViewTaskModal,
   setOpenViewTaskModal,
+  activityDetails,
+  cooperative
+  
 }: ViewTaskModalProps): JSX.Element => {
   return (
     <Transition.Root show={openViewTaskModal} as={Fragment}>
@@ -44,75 +63,75 @@ const ViewTaskModal = ({
                   </div>
                 </div>
                 <form className=" flex h-auto w-full flex-col">
-                  <div className="flex h-[70px] flex-col items-start mb-3">
-                    <label
-                      htmlFor="First Name"
-                      className=" text-[14px] font-normal leading-4 text-gray-600 tracking-tight mb-2"
-                    >
-                      {" "}
-                      Farmer name
-                    </label>
-                    <input
-                      type="text"
-                      value={"Abraham Ayegba"}
-                      readOnly
-                      className=" block h-[38px] w-full text-gray-700 tracking-tight appearance-none rounded-md border border-gray-100 bg-gray-50 px-3 py-2 capitalize placeholder-gray-400 focus:outline-none  sm:text-sm"
-                    />
-                  </div>
-                  <div className="flex h-[70px] flex-col items-start mb-4">
-                    <label
-                      htmlFor="First Name"
-                      className=" text-[14px] font-normal leading-4 text-gray-600 tracking-tight mb-2"
-                    >
-                      {" "}
-                      Cooperative assigned to
-                    </label>
-                    <input
-                      type="text"
-                      value={"Cooperative A"}
-                      readOnly
-                      className=" block h-[38px] w-full text-gray-700 tracking-tight appearance-none rounded-md border border-gray-100 bg-gray-50 px-3 py-2 capitalize placeholder-gray-400 focus:outline-none sm:text-sm"
-                    />
-                  </div>
-                  <div className="flex h-[70px] flex-col items-start mb-3">
-                    <label
-                      htmlFor="First Name"
-                      className=" text-[14px] font-normal leading-4 text-gray-600 tracking-tight mb-2"
-                    >
-                      {" "}
-                      Task
-                    </label>
-                    <input
-                      type="text"
-                      readOnly
-                      value={"Farm clearing"}
-                      className=" block h-[38px] text-gray-700 tracking-tight w-full appearance-none rounded-md border border-gray-100 bg-gray-50 px-3 py-2 capitalize placeholder-gray-400 focus:outline-none  sm:text-sm"
-                    />
-                  </div>
-                  <div className="flex h-[70px] flex-col items-start mb-3">
-                    <label
-                      htmlFor="First Name"
-                      className=" text-[14px] font-normal leading-4 text-gray-600 tracking-tight mb-2"
-                    >
-                      {" "}
-                      Date due
-                    </label>
-                    <input
-                      type="text"
-                      readOnly
-                      value={"23-06-12"}
-                      className=" block h-[38px] w-full text-gray-700 tracking-tight appearance-none rounded-md border border-gray-100 bg-gray-50 px-3 py-2 capitalize placeholder-gray-400 focus:outline-none  sm:text-sm"
-                    />
-                  </div>
-                  <div className=" flex flex-row items-center justify-end">
-                    <button
-                      type="button"
-                      className="flex w-[130px] items-center justify-center rounded-md border border-gray-100 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none"
-                      onClick={() => setOpenViewTaskModal(false)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
+                          <div className="flex h-[70px] flex-col items-start mb-3">
+                            <label
+                              htmlFor="First Name"
+                              className=" text-[14px] font-normal leading-4 text-gray-600 tracking-tight mb-2"
+                            >
+                              {" "}
+                              Farm Lot
+                            </label>
+                            <input
+                              type="text"
+                              value={activityDetails?.farmLotname}
+                              readOnly
+                              className=" block h-[38px] w-full text-gray-700 tracking-tight appearance-none rounded-md border border-gray-100 bg-gray-50 px-3 py-2 capitalize placeholder-gray-400 focus:outline-none  sm:text-sm"
+                            />
+                          </div>
+                          <div className="flex h-[70px] flex-col items-start mb-4">
+                            <label
+                              htmlFor="First Name"
+                              className=" text-[14px] font-normal leading-4 text-gray-600 tracking-tight mb-2"
+                            >
+                              {" "}
+                              Cooperative assigned to
+                            </label>
+                            <input
+                              type="text"
+                              value={cooperative}
+                              readOnly
+                              className=" block h-[38px] w-full text-gray-700 tracking-tight appearance-none rounded-md border border-gray-100 bg-gray-50 px-3 py-2 capitalize placeholder-gray-400 focus:outline-none sm:text-sm"
+                            />
+                          </div>
+                          <div className="flex h-[70px] flex-col items-start mb-3">
+                            <label
+                              htmlFor="First Name"
+                              className=" text-[14px] font-normal leading-4 text-gray-600 tracking-tight mb-2"
+                            >
+                              {" "}
+                              Task
+                            </label>
+                            <input
+                              type="text"
+                              readOnly
+                              value={activityDetails?.calendarActivity.activity.name}
+                              className=" block h-[38px] text-gray-700 tracking-tight w-full appearance-none rounded-md border border-gray-100 bg-gray-50 px-3 py-2 capitalize placeholder-gray-400 focus:outline-none  sm:text-sm"
+                            />
+                          </div>
+                          <div className="flex h-[70px] flex-col items-start mb-3">
+                            <label
+                              htmlFor="First Name"
+                              className=" text-[14px] font-normal leading-4 text-gray-600 tracking-tight mb-2"
+                            >
+                              {" "}
+                              Date due
+                            </label>
+                            <input
+                              type="text"
+                              readOnly
+                              value={activityDetails?.calendarActivity.endTime}
+                              className=" block h-[38px] w-full text-gray-700 tracking-tight appearance-none rounded-md border border-gray-100 bg-gray-50 px-3 py-2 capitalize placeholder-gray-400 focus:outline-none  sm:text-sm"
+                            />
+                          </div>
+                          <div className=" flex flex-row items-center justify-end">
+                            <button
+                              type="button"
+                              className="flex w-[130px] items-center justify-center rounded-md border border-gray-100 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none"
+                              onClick={() => setOpenViewTaskModal(false)}
+                            >
+                              Cancel
+                            </button>
+                          </div>
                 </form>
               </Dialog.Panel>
             </Transition.Child>

@@ -1,0 +1,15 @@
+query GetCalendarByCooperative($cooperativeId: String!){
+  getCalendarByCooperative(cooperativeId:$cooperativeId){
+    date
+    activitiesForDay{
+      farmLotname
+      calendarActivity{
+        activity{
+          name
+        }
+        startTime
+        endTime
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+mutation UpdateGeoCorp($geoCorpId: String!, $name: String, $geographicAreaId: String, $landGroupId: String, $archived: Boolean){
+  updateGeoCorp(geoCorpId:$geoCorpId, input:{
+    name:$name
+    geographicAreaId:$geographicAreaId
+    landGroupId:$landGroupId
+    archived:$archived
+  }){
+    id
+    name
+    archived
+    createdAt
+    updatedAt
+  }
+}

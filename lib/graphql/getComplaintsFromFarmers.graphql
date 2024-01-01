@@ -1,0 +1,19 @@
+query GetComplaintsFromFarmer($farmerId: String!){
+  getComplaintsFromFarmer(farmerId:$farmerId){
+    id
+    complaint
+    description
+    resolved
+    farmer{
+      id
+      name
+      coorperative{
+        name
+      }
+      farmLots{
+        name
+      }
+    }
+    
+  }
+}

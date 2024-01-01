@@ -1,0 +1,11 @@
+mutation UpdateGeoArea($geoAreaId: String!, $name: String, $archived: Boolean){
+  updateGeoArea(geoAreaId:$geoAreaId, input:{
+    name:$name
+    archived:$archived
+  }){
+    id
+    name
+    createdAt
+    updatedAt
+  }
+}

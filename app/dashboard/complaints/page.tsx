@@ -5,7 +5,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/20/solid";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useState } from "react";
+import { useGetComplaintsFromFarmerQuery, useGetFarmerProfilesQuery } from "@/src/generated/graphql";
+import ViewComplaintModal from "@/components/modals/viewComplaintModal";
 
 const people = [
   {
@@ -137,23 +148,91 @@ const people = [
   // More people...
 ];
 
+interface Complaint {
+  id: string;
+  complaint: string;
+  description: string;
+  resolved: boolean;
+  farmer: {
+    id: string;
+    name: string;
+    cooperative: {
+      name: string;
+    };
+    farmLots: {
+      name: string;
+    }[];
+  };
+}
+
 export default function Complaints() {
   const [isActive, setIsActive] = useState("unresolved-complaints");
+  const getFarmerProfile = useGetFarmerProfilesQuery()
+  const farmersProfileList = getFarmerProfile.data?.getFarmerProfiles
+  const [ farmerProfileId, setFarmerProfileId ] = useState("")
+  const [openViewComplaintModal, setOpenViewComplaintModal] = useState(false)
+  const [showComplaint, setShowComplaint] = useState<Complaint>();
+  
+  const getFarmerName = farmersProfileList?.find((item) => item?.id === farmerProfileId)?.name
+  const getComplaints = useGetComplaintsFromFarmerQuery({
+    variables: {
+       farmerId: farmerProfileId
+    },
+  })
+  const farmerComplaintList = getComplaints.data?.getComplaintsFromFarmer
+  const handleClick = (complaint:any) => {
+    setShowComplaint(complaint)
+  }
+  console.log(farmerComplaintList)
   return (
     <div className="px-4 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight  mb-[-53px] text-gray-600">
-          Complaints
+      <div className="flex justify-between space-y-2 pb-8">
+        <h2 className="text-3xl flex flex-col gap-y-2 font-bold tracking-tight  mb-[-53px] text-gray-600">
+         {getFarmerName ? `Complaints for Farmer ${getFarmerName}` : "Complaints"}
+          <span className="font-normal text-sm text-red-700">{getFarmerName ? "" : "Please select a farmer to view complaint profile"}</span>
         </h2>
-        <div className="flex items-center space-x-2">
-          {/* <CalendarDateRangePicker /> */}
+        <div className="flex h-[70px] flex-col items-start mb-4">
+        <label
+              htmlFor="First Name"
+              className=" text-2xl font-bold leading-4 text-gray-600 tracking-tight mb-4"
+            >
+              {" "}
+              Select Farmer
+          </label>
+          <Select
+            value={farmerProfileId}
+            onValueChange={(value) =>
+              setFarmerProfileId(value)
+            }
+           >
+             <SelectTrigger className="border border-gray-100 bg-gray-50 w-[400px] rounded-lg h-10 text-sm focus:outline-none px-3 py-2">
+               <SelectValue placeholder="Select Input Unit" />
+             </SelectTrigger>
+             <SelectContent className="border border-gray-100 bg-gray-50 w-full z-[200] shadow-sm text-gray-800">
+                  <SelectGroup>
+                      {
+                        farmersProfileList?.map((item) => (
+                          <SelectItem
+                            className="hover:bg-gray-100 cursor-pointer py-2 text-base"
+                            value={item?.id || ""}
+                            key={item?.id}
+                          >
+                            {
+                              item?.name
+                            }
+                          </SelectItem>
+                        ))
+                      }
+               </SelectGroup>
+             </SelectContent>
+          </Select>
         </div>
       </div>
       <Tabs
         defaultValue="unresolved-complaints"
         className=" flex flex-col items-end justify-end focus:outline-none"
       >
-        <TabsList className=" px-[4px]">
+        {/* <TabsList className=" px-[4px]">
           <TabsTrigger
             className={
               isActive === "unresolved-complaints"
@@ -180,29 +259,31 @@ export default function Complaints() {
           >
             Resolved complaints
           </TabsTrigger>
-        </TabsList>
+        </TabsList> */}
         <TabsContent value="unresolved-complaints" className=" w-full pb-5">
           <ul
             role="list"
             className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-6"
           >
-            {people.map((person) => (
-              <li
-                key={person.email}
+            {farmerComplaintList?.map((item) => (
+              !item?.resolved && (
+                <li
+                key={item?.id}
                 className="col-span-1 rounded-md bg-white shadow cursor-pointer"
+                onClick={() => {setOpenViewComplaintModal(true); handleClick(item)}}
               >
                 <div className="flex w-full items-center justify-between p-5 pb-2">
                   <div className="flex-1 truncate">
                     <div className="flex items-center space-x-3">
                       <h3 className="truncate text-sm font-medium text-gray-600 tracking-tight">
-                        {person.name}
+                        {getFarmerName}
                       </h3>
                       <span className="inline-flex flex-shrink-0 items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                        {person.role}
+                        farmer
                       </span>
                     </div>
                     <p className="mt-1 truncate text-sm text-gray-500">
-                      {person.title}
+                      {item?.farmer?.coorperative?.name}
                     </p>
                   </div>
                 </div>
@@ -210,15 +291,16 @@ export default function Complaints() {
                   <div className="-mt-px flex divide-x divide-gray-200">
                     <div className="grid">
                       <CardTitle className=" text-sm text-gray-600 tracking-tight font-medium">
-                        Complaint
+                        {item?.complaint}
                       </CardTitle>
                       <CardDescription className=" text-sm text-gray-500 mt-1">
-                        Farm equipment not received
+                        {item?.description}
                       </CardDescription>
                     </div>
                   </div>
                 </div>
               </li>
+              )
             ))}
           </ul>
         </TabsContent>
@@ -270,6 +352,7 @@ export default function Complaints() {
           </ul>
         </TabsContent>
       </Tabs>
+      <ViewComplaintModal openViewComplaintModal={openViewComplaintModal} setOpenViewComplaintModal={setOpenViewComplaintModal} complaintDetails={showComplaint} />
     </div>
   );
 }

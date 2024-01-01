@@ -7,7 +7,7 @@ query GetLandGroups{
       name
       id
     }
-    coorperative{
+    cooperative{
       name
     }
   }

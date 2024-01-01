@@ -1,0 +1,10 @@
+mutation CreateCropProfile($cropName: String!, $lifeCycle: String!){
+  createCropProfile(input:{
+    cropName:$cropName
+    lifeCycle:$lifeCycle
+  }){
+    id
+    cropName
+    lifeCycle
+  }
+}

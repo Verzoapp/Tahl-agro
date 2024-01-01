@@ -1,14 +1,34 @@
 "use client"
 import AddCooperativeModal from "@/components/modals/addCooperativeModal";
-import { useGetFarmLotsQuery, useGetGeoCorpsQuery } from "@/src/generated/graphql";
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import UpdateGeoCorpModal from "@/components/modals/updateGeoCorpModal";
+import { useGetGeoCorpsQuery } from "@/src/generated/graphql";
+import DeleteGeoCorpModal from "@/components/modals/deleteGeoCorp";
+import Link from "next/link";
 import React from "react";
 import { useState } from "react";
 
 const Cooperatives = () => {
   const [openAddCooperativeModal, setOpenCooperativeModal] = useState(false);
+  const [openUpdateGeoCorpModal, setOpenUpdateGeoCorpModal] = useState(false)
+  const [openDeleteGeoCorpModal, setOpenDeleteGeoCorpModal] = useState(false)
+  const [landGroupDefaultId, setLandGroupDefaultId] = useState("")
+  const [geoCorpId, setGeoCorpId] = useState("")
+  const [landGroupDefaultName, setLandGroupDefaultName] = useState("")
+  const [geoAreaDefaultId, setGeoAreaDefaultId] = useState("")
+  const [geoCorpDefaultName, setGeoCorpDefaultName] = useState("")
+  const [geoAreaDefaultName, setGeoAreaDefaultName] = useState("")
   const getGeoCorps = useGetGeoCorpsQuery()
   const geoCorpList = getGeoCorps.data?.getGeoCorps
+  const handleUpdateClick = (item:any) => {
+    setOpenUpdateGeoCorpModal(true);
+    setGeoCorpId(item?.id!);
+    setLandGroupDefaultId(item?.landGroup?.id!);
+    setLandGroupDefaultName(item?.landGroup?.name!);
+    setGeoAreaDefaultId(item?.geographicArea?.id!);
+    setGeoAreaDefaultName(item?.geographicArea?.name!);
+    setGeoCorpDefaultName(item?.name! || "");
+  };
+  
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between space-y-2">
@@ -64,9 +84,9 @@ const Cooperatives = () => {
                     <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
                       <div className="flex items-center">
                         <div className="ml-4">
-                          <div className="font-normal tracking-tight text-gray-600">
+                          <Link href={`/dashboard/cooperatives/${item?.id}`} className="font-normal tracking-tight text-gray-600 hover:text-[#2aa249]">
                             {item?.name}
-                          </div>
+                          </Link>
                         </div>
                       </div>
                     </td>
@@ -85,6 +105,21 @@ const Cooperatives = () => {
                         {item?.geographicArea?.name}
                       </div>
                     </td>
+                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-700">
+                      <button onClick={() => {
+                        handleUpdateClick(item)
+                        }} 
+                        type="button"
+                         className="font-normal tracking-tight text-[#2aa249]"
+                      >
+                        Update
+                      </button>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-700">
+                        <button onClick={() => {setOpenDeleteGeoCorpModal(true); setGeoCorpId(item?.id!)}} type="button" className="font-normal tracking-tight text-red-700">
+                          Delete
+                        </button>
+                      </td>
                   </tr>
                 ))}
               </tbody>
@@ -93,6 +128,17 @@ const Cooperatives = () => {
         </div>
       </div>
       <AddCooperativeModal openAddCooperativeModal={openAddCooperativeModal} setOpenAddCooperativeModal={setOpenCooperativeModal} />
+      <UpdateGeoCorpModal 
+        openUpdateGeoCorpModal={openUpdateGeoCorpModal} 
+        setOpenUpdateGeoCorpModal={setOpenUpdateGeoCorpModal} 
+        geoCorpId={geoCorpId} 
+        landGroupDefaultId={landGroupDefaultId} 
+        landGroupDefaultName={landGroupDefaultName}
+        geoAreaDefaultId={geoAreaDefaultId}
+        geoAreaDefaultName={geoAreaDefaultName}
+        geoCorpDefaultName={geoCorpDefaultName}
+      />
+      <DeleteGeoCorpModal openDeleteGeoCorpModal={openDeleteGeoCorpModal} setOpenDeleteGeoCorpModal={setOpenDeleteGeoCorpModal} geoCorpId={geoCorpId} />
     </div>
   );
 };

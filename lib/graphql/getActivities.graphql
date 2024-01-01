@@ -3,12 +3,16 @@ query GetActivities{
     id
     name
     updatedAt
+    createdAt
     adminId
-    admin{
-      fullname
-    }
     cropProfile{
       cropName
     }
+    cropProfileId
+    admin{
+      fullname
+      email
+    }
+    totalCost
   }
 }

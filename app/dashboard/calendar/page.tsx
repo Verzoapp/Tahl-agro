@@ -1,15 +1,24 @@
 "use client";
 import { CalendarIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import React from "react";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AddTaskModal from "@/components/modals/addTaskModal";
 import ViewTaskModal from "@/components/modals/viewTaskModal";
 import DailyTasksModal from "@/components/modals/dailyTasksModal";
-import { useGetActivitiesQuery } from "@/src/generated/graphql";
+import { useGetActivitiesQuery, useGetCalendarByCooperativeQuery, useGetGeoCorpsQuery, useGetUpcomingActivitiesByCooperativeQuery } from "@/src/generated/graphql";
 
 const meetings = [
   {
@@ -107,20 +116,28 @@ const meetings = [
   // More meetings...
 ];
 
-interface Activity {
-  id: string;
-  name: string ;
-  updatedAt: any;
-  adminId: string;
-  cropProfile:{
-    cropName: String
+interface CalendarActivity {
+  farmLotname: string;
+  calendarActivity: {
+    activity: {
+      name: string;
+    };
+    startTime: any;
+    endTime: any;
   };
-  admin: {
-    __typename?: 'Admin';
-    fullname?: string;
-    // Add more properties if needed
-  }
 }
+interface ActivityDetails {
+  farmLotname: string;
+  calendarActivity: {
+    activity: {
+      name: string;
+    };
+    startTime: string;
+    endTime: string;
+  };
+}
+
+
 
 const CalendarPage = () => {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
@@ -128,26 +145,92 @@ const CalendarPage = () => {
   const [openAddTaskModal, setOpenAddTaskModal] = useState(false);
   const [openViewTaskModal, setOpenViewTaskModal] = useState(false);
   const [openDailyTasksModal, setOpenDailyTasksModal] = useState(false);
-  const getActivity = useGetActivitiesQuery()
-  const activityList = getActivity.data?.getActivities
-  const [matchingData, setMatchingData] = useState<Activity[]>([]); 
-  const handleSelect = () => {
-    const selectedDate = date?.toDateString();
-    const filteredData: any = activityList?.filter(
-      item => new Date(item?.updatedAt).toDateString() === selectedDate
-    ); 
-    setMatchingData(filteredData);
-    setOpenDailyTasksModal(true)
-    date ? console.log(selectedDate) : console.log("date is undefined")
-    
-  };
-  console.log(matchingData)
+  const getGeoCorps = useGetGeoCorpsQuery()
+  const geoCorpList = getGeoCorps.data?.getGeoCorps
+  const [matchingData, setMatchingData] = useState<CalendarActivity[]>([]); 
+  const [showActivity, setShowActivity] = useState<ActivityDetails>();
+  const [coorperativeId, setCooperativeId] = useState("")
+  const getCalenderByCooperative = useGetCalendarByCooperativeQuery({
+    variables: {
+       cooperativeId: coorperativeId
+    },
+  })
+
+  const getUpcomingActivitiesByCorp = useGetUpcomingActivitiesByCooperativeQuery({
+    variables: {
+       cooperativeId: coorperativeId
+    },
+  })
+
+  const upcomingActivitiesList = getUpcomingActivitiesByCorp.data?.getUpcomingActivitiesByCooperative
+  const activitiesByCorpList = getCalenderByCooperative.data?.getCalendarByCooperative
+
+  useEffect(() => {
+    const handleSelect = () => {
+      const selectedDate = date?.toDateString();
+      // Map through activitiesByCorpList and extract activitiesForDay for each selected date
+      const filteredData: any = activitiesByCorpList?.map(
+        item => item?.activitiesForDay?.filter(
+          activity => new Date(activity?.calendarActivity?.startTime).toDateString() === selectedDate
+        )
+      );
+      const flattenedData = filteredData?.flat();
+      setMatchingData(flattenedData);
+    };
+
+    // Call the handleSelect function when the date changes
+    handleSelect();
+  }, [date, activitiesByCorpList]);
+
+  const handleClick = (activity:any) => {
+      setShowActivity(activity)
+  }
+
+  const getAllUpcomingActivities = upcomingActivitiesList?.map(item => item?.activitiesForDay?.map(item => item))
+  const getCorpName = geoCorpList?.find(item => item?.id === coorperativeId)?.name
+  
   return (
     <div>
-      <div className="flex items-center justify-between space-y-2 lg:px-[40px] xl:px-[40px]">
+      <div className="flex justify-between space-y-2 lg:px-[40px] xl:px-[40px] pb-8">
         <h2 className="text-3xl font-bold tracking-tight text-gray-600 mb-[-42px] pl-[6px]">
-          Calendar
+          Calendar for {getCorpName}
         </h2>
+        <div className="flex h-[70px] flex-col items-start mb-4">
+          <label
+              htmlFor="First Name"
+              className=" text-2xl font-bold leading-4 text-gray-600 tracking-tight mb-4"
+            >
+              {" "}
+              Select Cooperative
+          </label>
+          <Select
+            value={coorperativeId}
+            onValueChange={(value) =>
+              setCooperativeId(value)
+            }
+           >
+             <SelectTrigger className="border border-gray-100 bg-gray-50 w-[400px] rounded-lg h-10 text-sm focus:outline-none px-3 py-2">
+               <SelectValue placeholder="Select Input Unit" />
+             </SelectTrigger>
+             <SelectContent className="border border-gray-100 bg-gray-50 w-full z-[200] shadow-sm text-gray-800">
+                  <SelectGroup>
+                      {
+                        geoCorpList?.map((item) => (
+                          <SelectItem
+                            className="hover:bg-gray-100 cursor-pointer py-2 text-base"
+                            value={item?.id || ""}
+                            key={item?.id}
+                          >
+                            {
+                              item?.name
+                            }
+                          </SelectItem>
+                        ))
+                      }
+               </SelectGroup>
+             </SelectContent>
+          </Select>
+        </div>
       </div>
       <div className=" flex-1 lg:px-[48px] xl:px-[48px]">
         <Tabs
@@ -205,28 +288,14 @@ const CalendarPage = () => {
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={setDate}
-                  onDayClick={handleSelect}
+                  onSelect={(newDate) => {
+                    setDate(newDate);
+                    setOpenDailyTasksModal(true)  
+                  }}
                   className="rounded-md border flex justify-center w-10/12"
                 />
-                  <Link
-                    href="/dashboard/calendar/create-activity"
-                   
-                    className="mt-8 w-10/12 block text-center rounded-md bg-[#2aa249] hover:bg-[#238c3d] px-3 py-2 text-sm font-medium text-white"
-                  >
-                    Create activity
-                  </Link>
-                  <div>
-                    <Link
-                      href="/dashboard/calendar/activity-to-farm-lot"
-
-                      className="mt-8 w-10/12 block text-center rounded-md bg-[#2aa249] hover:bg-[#238c3d] px-3 py-2 text-sm font-medium text-white"
-                    >
-                      Add activity to farm lot
-                    </Link>
-                  </div>
                 </div>
-              </div>
+              </div>  
               <div className=" w-3/5 flex flex-col pr-4">
                 <p className=" pl-7 border-b border-b-gray-100 text-sm font-medium text-gray-600 tracking-tight pb-2">
                   Upcoming Tasks this month
@@ -236,61 +305,73 @@ const CalendarPage = () => {
                     role="list"
                     className="divide-y divide-gray-100 h-[550px] overflow-y-auto"
                   >
-                    {meetings.map((meeting) => (
-                      <li
-                        key={meeting.id}
-                        onClick={() => setOpenViewTaskModal(true)}
-                        className="relative py-5 hover:bg-gray-50 cursor-pointer"
-                      >
-                        <div className="px-4 sm:px-6 lg:px-8">
-                          <div className="mx-auto flex max-w-4xl justify-between gap-x-6">
-                            <div className="flex gap-x-4">
-                              <div className="min-w-0 flex-auto">
-                                <p className="text-sm font-medium leading-6 text-gray-600 tracking-tight">
-                                  <a className=" flex items-center gap-x-3">
-                                    <span className="absolute inset-x-0 -top-px bottom-0" />
-                                    {meeting.name}
-                                    <span className="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20 ">
-                                      farmer
-                                    </span>
-                                  </a>
-                                </p>
-                                <p className="mt-1 flex text-xs leading-5 text-gray-500">
-                                  <a className="relative truncate hover:underline">
-                                    {meeting.location}
-                                  </a>
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-x-4">
-                              <div className="hidden sm:flex sm:flex-col sm:items-end">
-                                <p className="text-sm leading-6 text-gray-600 tracking-tight">
-                                  {meeting.task}
-                                </p>
-                                <div className="flex space-x-3 items-center text-gray-500 tracking-tight text-[13px] mt-1">
-                                  <dt className="mt-0.5">
-                                    <span className="sr-only">Date</span>
-                                    <CalendarIcon
-                                      className="h-4 w-4 text-gray-400"
-                                      aria-hidden="true"
-                                    />
-                                  </dt>
-                                  <dd>
-                                    <time dateTime={meeting.datetime}>
-                                      {meeting.date} at {meeting.time}
-                                    </time>
-                                  </dd>
+                    {getAllUpcomingActivities?.flat().map((activity, index) => {
+                      const activityCreatedDate = activity?.calendarActivity?.startTime;
+                      const options: Intl.DateTimeFormatOptions = {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      };
+
+                      const formatter = new Intl.DateTimeFormat('en-US', options);
+                      const formattedDate = formatter.format(new Date(activityCreatedDate));
+                      return (
+                        <li
+                          key={index}
+                          onClick={() => {setOpenViewTaskModal(true); handleClick(activity)}}
+                          className="relative py-5 hover:bg-gray-50 cursor-pointer"
+                        >
+                          <div className="px-4 sm:px-6 lg:px-8">
+                            <div className="mx-auto flex max-w-4xl justify-between gap-x-6">
+                              <div className="flex gap-x-4">
+                                <div className="min-w-0 flex-auto">
+                                  <p className="text-sm font-medium leading-6 text-gray-600 tracking-tight">
+                                    <a className=" flex items-center gap-x-3">
+                                      <span className="absolute inset-x-0 -top-px bottom-0" />
+                                      {getCorpName}
+                                      <span className="rounded-md py-1 px-2 text-xs font-medium ring-1 ring-inset text-green-700 bg-green-50 ring-green-600/20 ">
+                                        cooperative
+                                      </span>
+                                    </a>
+                                  </p>
+                                  <p className="mt-1 flex text-xs leading-5 text-gray-500">
+                                    <a className="relative truncate hover:underline">
+                                      {activity?.farmLotname}
+                                    </a>
+                                  </p>
                                 </div>
                               </div>
-                              <ChevronRightIcon
-                                className="h-5 w-5 flex-none text-gray-400"
-                                aria-hidden="true"
-                              />
+                              <div className="flex items-center gap-x-4">
+                                <div className="hidden sm:flex sm:flex-col sm:items-end">
+                                  <p className="text-sm leading-6 text-gray-600 tracking-tight">
+                                    {activity?.calendarActivity?.activity?.name}
+                                  </p>
+                                  <div className="flex space-x-3 items-center text-gray-500 tracking-tight text-[13px] mt-1">
+                                    <dt className="mt-0.5">
+                                      <span className="sr-only">Date</span>
+                                      <CalendarIcon
+                                        className="h-4 w-4 text-gray-400"
+                                        aria-hidden="true"
+                                      />
+                                    </dt>
+                                    <dd>
+                                      <time dateTime={activity?.calendarActivity?.startTime}>
+                                        {formattedDate}
+                                      </time>
+                                    </dd>
+                                  </div>
+                                </div>
+                                <ChevronRightIcon
+                                  className="h-5 w-5 flex-none text-gray-400"
+                                  aria-hidden="true"
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </li>
-                    ))}
+                        </li>
+                      )
+                    })}
                   </ul>
                 </section>
               </div>
@@ -309,17 +390,6 @@ const CalendarPage = () => {
                   onSelect={() => {
                     // Assuming your data array is stored in a variable named 'dataArray'
                     setDate;
-                    const matchingData = activityList?.filter(item => {
-                      // Assuming 'updatedAt' is the property representing the date in your data
-                      const itemDate = new Date(item?.updatedAt).toDateString();
-                      const selectedDate = date?.toDateString();
-                      return itemDate === selectedDate;
-                    });
-                  
-                    console.log('Matching Data:', matchingData);
-                  
-                    // Other actions you want to perform
-                     // Assuming this is your setter function
                   }}
                   className="rounded-md border flex justify-center w-10/12"
                 />
@@ -509,6 +579,8 @@ const CalendarPage = () => {
       <ViewTaskModal
         openViewTaskModal={openViewTaskModal}
         setOpenViewTaskModal={setOpenViewTaskModal}
+        activityDetails={showActivity}
+        cooperative={getCorpName!}
       />
       <DailyTasksModal
         activity={matchingData}

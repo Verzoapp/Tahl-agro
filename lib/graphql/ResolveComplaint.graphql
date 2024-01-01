@@ -1,0 +1,6 @@
+mutation ResolveComplaint($complaintId: String!, $comment: String){
+  resolveComplaint(input:{
+    complaintId:$complaintId
+    comment:$comment
+  })
+}

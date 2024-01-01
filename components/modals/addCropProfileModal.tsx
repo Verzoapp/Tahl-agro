@@ -1,5 +1,5 @@
 "use client"
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   Command,
@@ -17,67 +17,79 @@ import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
 import { client } from "@/src/apollo/ApolloClient";
-import { useCreateFarmLotMutation, useGetCropProfilesQuery, useGetGeoAreasQuery, useGetGeoCorpsQuery, useGetLandGroupsQuery } from "@/src/generated/graphql";
+import { useCreateCropProfileMutation, useCreateLandGroupMutation, useGetGeoAreasQuery } from "@/src/generated/graphql";
+import { toast } from "../ui/use-toast";
 
-interface AddFarmLotsModalProps {
-  openAddFarmLotModal: boolean;
-  setOpenAddFarmLotModal: React.Dispatch<React.SetStateAction<boolean>>;
-  corpId: string;
-  landGroupId: string;
-  geoAreaId: string
+interface AddLandGroupModalProps {
+  openAddCropProfileModal: boolean;
+  setOpenCropProfileModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type FormData = {
-  name: string;
+  cropName: string;
 };
 
-const AddFarmLotsModal = ({
-  openAddFarmLotModal,
-  setOpenAddFarmLotModal,
-  corpId,
-  landGroupId,
-  geoAreaId
-}: AddFarmLotsModalProps): JSX.Element => {
-  const [createFarmLotMutation, { data, loading, error }] = useCreateFarmLotMutation()
-  const landGroups = useGetLandGroupsQuery()
-  const geoCorps = useGetGeoCorpsQuery()
-  const geoAreas = useGetGeoAreasQuery()
-  const cropProfiles = useGetCropProfilesQuery()
-  const cropProfileList = cropProfiles.data?.getCropProfiles
-  const [openCropProfileDropDown, setOpenCropProfileDropDown] = useState(false);
-  const [cropProfileId, setCropProfileId] = useState("")
+const lifeCycleList = [
+ "Annual",
+ "Biennial",
+ "Perennial"
+]
+
+const AddCropProfileModal = ({
+  openAddCropProfileModal,
+  setOpenCropProfileModal,
+}: AddLandGroupModalProps): JSX.Element => {
+  const [createCropProfileMutation, { data, loading, error }] = useCreateCropProfileMutation()
+  const geoAreas = useGetGeoAreasQuery();
+  const [openLifeCycleDropDown, setOpenLifeCycleDropDown] = useState(false)
+  const [lifeCycle, setLifeCycle] = useState("")
 
   const {
     register,
     handleSubmit,
     getValues,
   } = useForm<FormData>();
+
+  const showSuccessToast = () => {
+    toast({
+      variant: "default",
+      title: "Success",
+      description: "Corp Profile Added",
+      duration: 3000,
+    });
+  };
+  
+  const showFailureToast = () => {
+    toast({
+      variant: "destructive",
+      title: "Uh oh! Something went wrong.",
+      description: "There was a problem with your request.",
+      duration: 3000,
+    });
+  };
+
   const onSubmitHandler = async (form: FormData) => {
     try {
-      const response = await createFarmLotMutation(
-        {
-            variables: {
-               landGroupId: landGroupId,
-               coorperativeId: corpId,
-               geographicAreaId: geoAreaId,
-               cropProfileId: cropProfileId,
-               ...form
-            },
-          }
-      )
-      setOpenAddFarmLotModal(false)
+      const response = await createCropProfileMutation({
+        variables: {
+           lifeCycle: lifeCycle,
+           ...form
+        },
+      })
+      setOpenCropProfileModal(false)
       client.refetchQueries({
         include: "active",
       });
+      showSuccessToast()
     } catch (error) {
       console.error(error);
+      showFailureToast()
     }
   };
 
- console.log(corpId)
   return (
-    <Transition.Root show={openAddFarmLotModal} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpenAddFarmLotModal}>
+    <Transition.Root show={openAddCropProfileModal} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={setOpenCropProfileModal}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -104,7 +116,7 @@ const AddFarmLotsModal = ({
               <Dialog.Panel as="div" className="relative transform overflow-hidden rounded-lg bg-white px-8 pb-7 pt-6 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                 <div className="mt-2 text-center mb-4">
                   <div className="text-lg font-medium leading-6 text-gray-700 tracking-tight">
-                    Create Farm Lot
+                    Create Land Group
                   </div>
                 </div>
                 <form className=" flex h-auto w-full flex-col"  onSubmit={handleSubmit(onSubmitHandler)}>
@@ -114,13 +126,13 @@ const AddFarmLotsModal = ({
                         className=" text-[14px] font-normal leading-4 text-gray-600 tracking-tight mb-2"
                       >
                         {" "}
-                        Farm Lot Name
+                        Crop Name
                       </label>
                       <input
                         type="text"
                         required
                         className=" block h-[38px] w-full appearance-none rounded-md border border-gray-100 bg-gray-50 px-3 py-2 capitalize placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2aa249] sm:text-sm"
-                        {...register("name")}
+                        {...register("cropName")}
                       />
                     </div>
                     <div className="mb-4">
@@ -129,37 +141,37 @@ const AddFarmLotsModal = ({
                           className=" text-[14px] font-normal leading-4 text-gray-600 tracking-tight mb-2 block"
                         >
                           {" "}
-                          Crop Profile
+                          Crop Life Cycle
                       </label>
-                      <Popover open={openCropProfileDropDown} onOpenChange={setOpenCropProfileDropDown}>
+                      <Popover open={openLifeCycleDropDown} onOpenChange={setOpenLifeCycleDropDown}>
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
                             role="combobox"
-                            aria-expanded={openCropProfileDropDown}
+                            aria-expanded={openLifeCycleDropDown}
                             className="flex justify-between  border border-gray-100 bg-gray-50 rounded-lg h-10 w-full text-sm focus:outline-none px-3 py-2"
                           >
-                            {cropProfileId
-                              ? cropProfileList?.find((item) => item?.id === cropProfileId)?.cropName
-                              : "Select crop profile..."}
+                            {lifeCycle
+                              ? lifeCycle
+                              : "Select crop life cycle..."}
                             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-full max-h-[300px] rounded bg-white p-0 shadow-sm">
                           <Command>
-                            <CommandInput placeholder="Search crop profile..." />
+                            <CommandInput placeholder="Search geographical area..." />
                             <CommandEmpty>No crop profile found.</CommandEmpty>
                             <CommandGroup>
-                              {cropProfileList?.map((item) => (
+                              {lifeCycleList?.map((item, index) => (
                                 <CommandItem
-                                  key={item?.id}
-                                  value={item?.id!}
+                                  key={index}
+                                  value={item}
                                   onSelect={(currentValue) => {
-                                    setCropProfileId(currentValue)
-                                    setOpenCropProfileDropDown(false)
+                                    setLifeCycle(currentValue)
+                                    setOpenLifeCycleDropDown(false)
                                   }}
                                 >
-                                  {item?.cropName}
+                                  {item}
                                 </CommandItem>
                               ))}
                             </CommandGroup>
@@ -171,7 +183,7 @@ const AddFarmLotsModal = ({
                     <button
                       type="button"
                       className="flex w-[130px] items-center justify-center rounded-md border border-gray-100 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 focus:outline-none"
-                      onClick={() => setOpenAddFarmLotModal(false)}
+                      onClick={() => setOpenCropProfileModal(false)}
                     >
                       Cancel
                     </button>
@@ -192,4 +204,4 @@ const AddFarmLotsModal = ({
   );
 };
 
-export default AddFarmLotsModal;
+export default AddCropProfileModal;

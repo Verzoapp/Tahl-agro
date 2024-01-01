@@ -1,0 +1,3 @@
+mutation DeleteGeoArea($geoAreaId: String!){
+  deleteGeoArea(geoAreaId:$geoAreaId)
+}

@@ -180,6 +180,7 @@ export type ChangeFarmerPassword = {
 
 export type Complaint = {
   __typename?: 'Complaint';
+  adminComment?: Maybe<Scalars['String']['output']>;
   archived?: Maybe<Scalars['Boolean']['output']>;
   complaint?: Maybe<Scalars['String']['output']>;
   createdAt?: Maybe<Scalars['Date']['output']>;
@@ -488,7 +489,7 @@ export type LandGroup = {
   adminId?: Maybe<Scalars['String']['output']>;
   archived?: Maybe<Scalars['Boolean']['output']>;
   calendar?: Maybe<Calendar>;
-  coorperative?: Maybe<Cooperative>;
+  cooperative?: Maybe<Cooperative>;
   createdAt?: Maybe<Scalars['Date']['output']>;
   farmLots?: Maybe<Array<Maybe<FarmLot>>>;
   geographicArea?: Maybe<GeographicArea>;
@@ -929,7 +930,7 @@ export type MutationResetForgotPasswordArgs = {
 
 
 export type MutationResolveComplaintArgs = {
-  complaintId: Scalars['String']['input'];
+  input: ResolveComplaint;
 };
 
 
@@ -1050,6 +1051,7 @@ export type Query = {
   getAdmins?: Maybe<Array<Maybe<Admin>>>;
   getCalendarActivityTemplateById?: Maybe<CalendarActivityTemplate>;
   getCalendarActivityTemplates?: Maybe<Array<Maybe<CalendarActivityTemplate>>>;
+  getCalendarByCooperative?: Maybe<Array<Maybe<CalendarByFarmerFarmlotResponse>>>;
   getCalendarByFarmLot?: Maybe<Array<Maybe<CalendarByFarmLotResponse>>>;
   getCalendarById?: Maybe<Calendar>;
   getCalendars?: Maybe<Array<Maybe<Calendar>>>;
@@ -1086,12 +1088,14 @@ export type Query = {
   getLandGroupById?: Maybe<LandGroup>;
   getLandGroups: Array<Maybe<LandGroup>>;
   getLatestActivities?: Maybe<Array<Maybe<CalendarByFarmerFarmlotResponse>>>;
+  getLatestActivitiesByCooperative?: Maybe<Array<Maybe<CalendarByFarmerFarmlotResponse>>>;
   getRoleById?: Maybe<Role>;
   getRoles: Array<Maybe<Role>>;
   getRolesForAdmin?: Maybe<Array<Maybe<Role>>>;
   getUnitById?: Maybe<Unit>;
   getUnits?: Maybe<Array<Maybe<Unit>>>;
   getUpcomingActivities?: Maybe<Array<Maybe<CalendarByFarmerFarmlotResponse>>>;
+  getUpcomingActivitiesByCooperative?: Maybe<Array<Maybe<CalendarByFarmerFarmlotResponse>>>;
   getWarehouseById?: Maybe<Warehouse>;
   getWarehouses?: Maybe<Array<Maybe<Warehouse>>>;
 };
@@ -1119,6 +1123,11 @@ export type QueryGetAdminProfileArgs = {
 
 export type QueryGetCalendarActivityTemplateByIdArgs = {
   templateId: Scalars['String']['input'];
+};
+
+
+export type QueryGetCalendarByCooperativeArgs = {
+  cooperativeId: Scalars['String']['input'];
 };
 
 
@@ -1217,6 +1226,11 @@ export type QueryGetLandGroupByIdArgs = {
 };
 
 
+export type QueryGetLatestActivitiesByCooperativeArgs = {
+  cooperativeId: Scalars['String']['input'];
+};
+
+
 export type QueryGetRoleByIdArgs = {
   roleId: Scalars['String']['input'];
 };
@@ -1227,8 +1241,18 @@ export type QueryGetUnitByIdArgs = {
 };
 
 
+export type QueryGetUpcomingActivitiesByCooperativeArgs = {
+  cooperativeId: Scalars['String']['input'];
+};
+
+
 export type QueryGetWarehouseByIdArgs = {
   warehouseId: Scalars['String']['input'];
+};
+
+export type ResolveComplaint = {
+  comment?: InputMaybe<Scalars['String']['input']>;
+  complaintId: Scalars['String']['input'];
 };
 
 export type Role = {
@@ -1409,6 +1433,14 @@ export type CreateActivityMutationVariables = Exact<{
 
 export type CreateActivityMutation = { __typename?: 'Mutation', createActivity?: { __typename?: 'Activity', id?: string | null, name?: string | null, cost?: number | null, totalCost?: number | null } | null };
 
+export type CreateCropProfileMutationVariables = Exact<{
+  cropName: Scalars['String']['input'];
+  lifeCycle: Scalars['String']['input'];
+}>;
+
+
+export type CreateCropProfileMutation = { __typename?: 'Mutation', createCropProfile?: { __typename?: 'CropProfile', id?: string | null, cropName?: string | null, lifeCycle?: string | null } | null };
+
 export type CreateInputMutationVariables = Exact<{
   name: Scalars['String']['input'];
   cost: Scalars['Float']['input'];
@@ -1454,10 +1486,94 @@ export type CreateLandGroupMutationVariables = Exact<{
 
 export type CreateLandGroupMutation = { __typename?: 'Mutation', createLandGroup?: { __typename?: 'LandGroup', id?: string | null, name?: string | null, createdAt?: any | null } | null };
 
+export type DeleteInputMutationVariables = Exact<{
+  inputId: Scalars['String']['input'];
+}>;
+
+
+export type DeleteInputMutation = { __typename?: 'Mutation', deleteInput?: boolean | null };
+
+export type DeleteFarmLotMutationVariables = Exact<{
+  farmLotId: Scalars['String']['input'];
+}>;
+
+
+export type DeleteFarmLotMutation = { __typename?: 'Mutation', deleteFarmLot?: boolean | null };
+
+export type DeleteGeoAreaMutationVariables = Exact<{
+  geoAreaId: Scalars['String']['input'];
+}>;
+
+
+export type DeleteGeoAreaMutation = { __typename?: 'Mutation', deleteGeoArea?: boolean | null };
+
+export type DeleteGeoCorpMutationVariables = Exact<{
+  geoCorpId: Scalars['String']['input'];
+}>;
+
+
+export type DeleteGeoCorpMutation = { __typename?: 'Mutation', deleteGeoCorp?: boolean | null };
+
+export type DeleteLandGroupMutationVariables = Exact<{
+  landGroupId: Scalars['String']['input'];
+}>;
+
+
+export type DeleteLandGroupMutation = { __typename?: 'Mutation', deleteLandGroup?: boolean | null };
+
 export type GenerateQrCodeDataUrlMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GenerateQrCodeDataUrlMutation = { __typename?: 'Mutation', generateQrCodeDataURL: string };
+
+export type ResolveComplaintMutationVariables = Exact<{
+  complaintId: Scalars['String']['input'];
+  comment?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type ResolveComplaintMutation = { __typename?: 'Mutation', resolveComplaint?: boolean | null };
+
+export type UpdateFarmLotMutationVariables = Exact<{
+  farmLotId: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  landGroupId?: InputMaybe<Scalars['String']['input']>;
+  coorperativeId?: InputMaybe<Scalars['String']['input']>;
+  geographicAreaId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type UpdateFarmLotMutation = { __typename?: 'Mutation', updateFarmLot?: { __typename?: 'FarmLot', id?: string | null, name?: string | null, landGroupId?: string | null, geographicAreaId?: string | null, coorperativeId?: string | null, archived?: boolean | null, createdAt?: any | null, updatedAt?: any | null } | null };
+
+export type UpdateGeoAreaMutationVariables = Exact<{
+  geoAreaId: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  archived?: InputMaybe<Scalars['Boolean']['input']>;
+}>;
+
+
+export type UpdateGeoAreaMutation = { __typename?: 'Mutation', updateGeoArea?: { __typename?: 'GeographicArea', id?: string | null, name?: string | null, createdAt?: any | null, updatedAt?: any | null } | null };
+
+export type UpdateGeoCorpMutationVariables = Exact<{
+  geoCorpId: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  geographicAreaId?: InputMaybe<Scalars['String']['input']>;
+  landGroupId?: InputMaybe<Scalars['String']['input']>;
+  archived?: InputMaybe<Scalars['Boolean']['input']>;
+}>;
+
+
+export type UpdateGeoCorpMutation = { __typename?: 'Mutation', updateGeoCorp?: { __typename?: 'Cooperative', id?: string | null, name?: string | null, archived?: boolean | null, createdAt?: any | null, updatedAt?: any | null } | null };
+
+export type UpdateLandGroupMutationVariables = Exact<{
+  landGroupId: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+  geographicAreaId?: InputMaybe<Scalars['String']['input']>;
+  archived?: InputMaybe<Scalars['Boolean']['input']>;
+}>;
+
+
+export type UpdateLandGroupMutation = { __typename?: 'Mutation', updateLandGroup?: { __typename?: 'LandGroup', id?: string | null, name?: string | null, createdAt?: any | null, updatedAt?: any | null } | null };
 
 export type CreateEquipmentMutationVariables = Exact<{
   name: Scalars['String']['input'];
@@ -1470,12 +1586,26 @@ export type CreateEquipmentMutation = { __typename?: 'Mutation', createEquipment
 export type GetActivitiesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetActivitiesQuery = { __typename?: 'Query', getActivities?: Array<{ __typename?: 'Activity', id?: string | null, name?: string | null, updatedAt?: any | null, adminId?: string | null, admin?: { __typename?: 'Admin', fullname?: string | null } | null, cropProfile?: { __typename?: 'CropProfile', cropName?: string | null } | null } | null> | null };
+export type GetActivitiesQuery = { __typename?: 'Query', getActivities?: Array<{ __typename?: 'Activity', id?: string | null, name?: string | null, updatedAt?: any | null, createdAt?: any | null, adminId?: string | null, cropProfileId?: string | null, totalCost?: number | null, cropProfile?: { __typename?: 'CropProfile', cropName?: string | null } | null, admin?: { __typename?: 'Admin', fullname?: string | null, email?: string | null } | null } | null> | null };
+
+export type GetCalendarByCooperativeQueryVariables = Exact<{
+  cooperativeId: Scalars['String']['input'];
+}>;
+
+
+export type GetCalendarByCooperativeQuery = { __typename?: 'Query', getCalendarByCooperative?: Array<{ __typename?: 'CalendarByFarmerFarmlotResponse', date?: any | null, activitiesForDay?: Array<{ __typename?: 'FarmLotActivitiesForDay', farmLotname?: string | null, calendarActivity?: { __typename?: 'CalendarActivity', startTime?: any | null, endTime?: any | null, activity?: { __typename?: 'Activity', name?: string | null } | null } | null } | null> | null } | null> | null };
+
+export type GetComplaintsFromFarmerQueryVariables = Exact<{
+  farmerId: Scalars['String']['input'];
+}>;
+
+
+export type GetComplaintsFromFarmerQuery = { __typename?: 'Query', getComplaintsFromFarmer?: Array<{ __typename?: 'Complaint', id?: string | null, complaint?: string | null, description?: string | null, resolved?: boolean | null, farmer?: { __typename?: 'Farmer', id?: string | null, name?: string | null, coorperative?: { __typename?: 'Cooperative', name?: string | null } | null, farmLots?: Array<{ __typename?: 'FarmLot', name?: string | null } | null> | null } | null } | null> | null };
 
 export type GetCropProfilesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCropProfilesQuery = { __typename?: 'Query', getCropProfiles?: Array<{ __typename?: 'CropProfile', id?: string | null, cropName?: string | null, lifeCycle?: string | null } | null> | null };
+export type GetCropProfilesQuery = { __typename?: 'Query', getCropProfiles?: Array<{ __typename?: 'CropProfile', id?: string | null, cropName?: string | null, lifeCycle?: string | null, createdAt?: any | null } | null> | null };
 
 export type GetEquipmentsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1490,22 +1620,29 @@ export type GetInputsQuery = { __typename?: 'Query', getInputs?: Array<{ __typen
 export type GetFarmLotsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFarmLotsQuery = { __typename?: 'Query', getFarmLots: Array<{ __typename?: 'FarmLot', id?: string | null, name?: string | null, archived?: boolean | null, landGroup?: { __typename?: 'LandGroup', id?: string | null, name?: string | null } | null, coorperative?: { __typename?: 'Cooperative', id?: string | null, name?: string | null } | null } | null> };
+export type GetFarmLotsQuery = { __typename?: 'Query', getFarmLots: Array<{ __typename?: 'FarmLot', id?: string | null, name?: string | null, archived?: boolean | null, landGroup?: { __typename?: 'LandGroup', id?: string | null, name?: string | null } | null, coorperative?: { __typename?: 'Cooperative', id?: string | null, name?: string | null } | null, geographicArea?: { __typename?: 'GeographicArea', id?: string | null, name?: string | null } | null } | null> };
 
 export type GetFarmerProfilesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFarmerProfilesQuery = { __typename?: 'Query', getFarmerProfiles: Array<{ __typename?: 'Farmer', name?: string | null, id?: string | null, email?: string | null } | null> };
+export type GetFarmerProfilesQuery = { __typename?: 'Query', getFarmerProfiles: Array<{ __typename?: 'Farmer', name?: string | null, id?: string | null, farmLots?: Array<{ __typename?: 'FarmLot', name?: string | null } | null> | null } | null> };
 
 export type GetGeoAreasQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetGeoAreasQuery = { __typename?: 'Query', getGeoAreas: Array<{ __typename?: 'GeographicArea', id?: string | null, name?: string | null, createdAt?: any | null } | null> };
 
+export type GetGeoCorpByIdQueryVariables = Exact<{
+  geoCorpId: Scalars['String']['input'];
+}>;
+
+
+export type GetGeoCorpByIdQuery = { __typename?: 'Query', getGeoCorpById?: { __typename?: 'Cooperative', id?: string | null, name?: string | null, archived?: boolean | null, createdAt?: any | null, landGroup?: { __typename?: 'LandGroup', name?: string | null, id?: string | null } | null, geographicArea?: { __typename?: 'GeographicArea', name?: string | null, id?: string | null } | null } | null };
+
 export type GetGeoCorpsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetGeoCorpsQuery = { __typename?: 'Query', getGeoCorps: Array<{ __typename?: 'Cooperative', id?: string | null, name?: string | null, createdAt?: any | null, farmLots?: Array<{ __typename?: 'FarmLot', name?: string | null } | null> | null, geographicArea?: { __typename?: 'GeographicArea', name?: string | null } | null, landGroup?: { __typename?: 'LandGroup', name?: string | null } | null } | null> };
+export type GetGeoCorpsQuery = { __typename?: 'Query', getGeoCorps: Array<{ __typename?: 'Cooperative', id?: string | null, name?: string | null, createdAt?: any | null, farmLots?: Array<{ __typename?: 'FarmLot', name?: string | null } | null> | null, geographicArea?: { __typename?: 'GeographicArea', name?: string | null, id?: string | null } | null, landGroup?: { __typename?: 'LandGroup', name?: string | null, id?: string | null } | null } | null> };
 
 export type GetInputCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1515,12 +1652,19 @@ export type GetInputCategoriesQuery = { __typename?: 'Query', getInputCategories
 export type GetLandGroupsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetLandGroupsQuery = { __typename?: 'Query', getLandGroups: Array<{ __typename?: 'LandGroup', id?: string | null, name?: string | null, createdAt?: any | null, geographicArea?: { __typename?: 'GeographicArea', name?: string | null, id?: string | null } | null, coorperative?: { __typename?: 'Cooperative', name?: string | null } | null } | null> };
+export type GetLandGroupsQuery = { __typename?: 'Query', getLandGroups: Array<{ __typename?: 'LandGroup', id?: string | null, name?: string | null, createdAt?: any | null, geographicArea?: { __typename?: 'GeographicArea', name?: string | null, id?: string | null } | null, cooperative?: { __typename?: 'Cooperative', name?: string | null } | null } | null> };
 
 export type GetUnitsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetUnitsQuery = { __typename?: 'Query', getUnits?: Array<{ __typename?: 'Unit', id?: string | null, unitName?: string | null } | null> | null };
+
+export type GetUpcomingActivitiesByCooperativeQueryVariables = Exact<{
+  cooperativeId: Scalars['String']['input'];
+}>;
+
+
+export type GetUpcomingActivitiesByCooperativeQuery = { __typename?: 'Query', getUpcomingActivitiesByCooperative?: Array<{ __typename?: 'CalendarByFarmerFarmlotResponse', date?: any | null, activitiesForDay?: Array<{ __typename?: 'FarmLotActivitiesForDay', farmLotname?: string | null, calendarActivity?: { __typename?: 'CalendarActivity', startTime?: any | null, endTime?: any | null, activity?: { __typename?: 'Activity', name?: string | null } | null } | null } | null> | null } | null> | null };
 
 
 export const AddActivityToCalendarDocument = gql`
@@ -1672,6 +1816,42 @@ export function useCreateActivityMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateActivityMutationHookResult = ReturnType<typeof useCreateActivityMutation>;
 export type CreateActivityMutationResult = Apollo.MutationResult<CreateActivityMutation>;
 export type CreateActivityMutationOptions = Apollo.BaseMutationOptions<CreateActivityMutation, CreateActivityMutationVariables>;
+export const CreateCropProfileDocument = gql`
+    mutation CreateCropProfile($cropName: String!, $lifeCycle: String!) {
+  createCropProfile(input: {cropName: $cropName, lifeCycle: $lifeCycle}) {
+    id
+    cropName
+    lifeCycle
+  }
+}
+    `;
+export type CreateCropProfileMutationFn = Apollo.MutationFunction<CreateCropProfileMutation, CreateCropProfileMutationVariables>;
+
+/**
+ * __useCreateCropProfileMutation__
+ *
+ * To run a mutation, you first call `useCreateCropProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCropProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCropProfileMutation, { data, loading, error }] = useCreateCropProfileMutation({
+ *   variables: {
+ *      cropName: // value for 'cropName'
+ *      lifeCycle: // value for 'lifeCycle'
+ *   },
+ * });
+ */
+export function useCreateCropProfileMutation(baseOptions?: Apollo.MutationHookOptions<CreateCropProfileMutation, CreateCropProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCropProfileMutation, CreateCropProfileMutationVariables>(CreateCropProfileDocument, options);
+      }
+export type CreateCropProfileMutationHookResult = ReturnType<typeof useCreateCropProfileMutation>;
+export type CreateCropProfileMutationResult = Apollo.MutationResult<CreateCropProfileMutation>;
+export type CreateCropProfileMutationOptions = Apollo.BaseMutationOptions<CreateCropProfileMutation, CreateCropProfileMutationVariables>;
 export const CreateInputDocument = gql`
     mutation CreateInput($name: String!, $cost: Float!, $inputCategoryId: String!, $inputUnitId: String!) {
   createInput(
@@ -1866,6 +2046,161 @@ export function useCreateLandGroupMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateLandGroupMutationHookResult = ReturnType<typeof useCreateLandGroupMutation>;
 export type CreateLandGroupMutationResult = Apollo.MutationResult<CreateLandGroupMutation>;
 export type CreateLandGroupMutationOptions = Apollo.BaseMutationOptions<CreateLandGroupMutation, CreateLandGroupMutationVariables>;
+export const DeleteInputDocument = gql`
+    mutation DeleteInput($inputId: String!) {
+  deleteInput(inputId: $inputId)
+}
+    `;
+export type DeleteInputMutationFn = Apollo.MutationFunction<DeleteInputMutation, DeleteInputMutationVariables>;
+
+/**
+ * __useDeleteInputMutation__
+ *
+ * To run a mutation, you first call `useDeleteInputMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteInputMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteInputMutation, { data, loading, error }] = useDeleteInputMutation({
+ *   variables: {
+ *      inputId: // value for 'inputId'
+ *   },
+ * });
+ */
+export function useDeleteInputMutation(baseOptions?: Apollo.MutationHookOptions<DeleteInputMutation, DeleteInputMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteInputMutation, DeleteInputMutationVariables>(DeleteInputDocument, options);
+      }
+export type DeleteInputMutationHookResult = ReturnType<typeof useDeleteInputMutation>;
+export type DeleteInputMutationResult = Apollo.MutationResult<DeleteInputMutation>;
+export type DeleteInputMutationOptions = Apollo.BaseMutationOptions<DeleteInputMutation, DeleteInputMutationVariables>;
+export const DeleteFarmLotDocument = gql`
+    mutation DeleteFarmLot($farmLotId: String!) {
+  deleteFarmLot(farmLotId: $farmLotId)
+}
+    `;
+export type DeleteFarmLotMutationFn = Apollo.MutationFunction<DeleteFarmLotMutation, DeleteFarmLotMutationVariables>;
+
+/**
+ * __useDeleteFarmLotMutation__
+ *
+ * To run a mutation, you first call `useDeleteFarmLotMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteFarmLotMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteFarmLotMutation, { data, loading, error }] = useDeleteFarmLotMutation({
+ *   variables: {
+ *      farmLotId: // value for 'farmLotId'
+ *   },
+ * });
+ */
+export function useDeleteFarmLotMutation(baseOptions?: Apollo.MutationHookOptions<DeleteFarmLotMutation, DeleteFarmLotMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteFarmLotMutation, DeleteFarmLotMutationVariables>(DeleteFarmLotDocument, options);
+      }
+export type DeleteFarmLotMutationHookResult = ReturnType<typeof useDeleteFarmLotMutation>;
+export type DeleteFarmLotMutationResult = Apollo.MutationResult<DeleteFarmLotMutation>;
+export type DeleteFarmLotMutationOptions = Apollo.BaseMutationOptions<DeleteFarmLotMutation, DeleteFarmLotMutationVariables>;
+export const DeleteGeoAreaDocument = gql`
+    mutation DeleteGeoArea($geoAreaId: String!) {
+  deleteGeoArea(geoAreaId: $geoAreaId)
+}
+    `;
+export type DeleteGeoAreaMutationFn = Apollo.MutationFunction<DeleteGeoAreaMutation, DeleteGeoAreaMutationVariables>;
+
+/**
+ * __useDeleteGeoAreaMutation__
+ *
+ * To run a mutation, you first call `useDeleteGeoAreaMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteGeoAreaMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteGeoAreaMutation, { data, loading, error }] = useDeleteGeoAreaMutation({
+ *   variables: {
+ *      geoAreaId: // value for 'geoAreaId'
+ *   },
+ * });
+ */
+export function useDeleteGeoAreaMutation(baseOptions?: Apollo.MutationHookOptions<DeleteGeoAreaMutation, DeleteGeoAreaMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteGeoAreaMutation, DeleteGeoAreaMutationVariables>(DeleteGeoAreaDocument, options);
+      }
+export type DeleteGeoAreaMutationHookResult = ReturnType<typeof useDeleteGeoAreaMutation>;
+export type DeleteGeoAreaMutationResult = Apollo.MutationResult<DeleteGeoAreaMutation>;
+export type DeleteGeoAreaMutationOptions = Apollo.BaseMutationOptions<DeleteGeoAreaMutation, DeleteGeoAreaMutationVariables>;
+export const DeleteGeoCorpDocument = gql`
+    mutation DeleteGeoCorp($geoCorpId: String!) {
+  deleteGeoCorp(geoCorpId: $geoCorpId)
+}
+    `;
+export type DeleteGeoCorpMutationFn = Apollo.MutationFunction<DeleteGeoCorpMutation, DeleteGeoCorpMutationVariables>;
+
+/**
+ * __useDeleteGeoCorpMutation__
+ *
+ * To run a mutation, you first call `useDeleteGeoCorpMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteGeoCorpMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteGeoCorpMutation, { data, loading, error }] = useDeleteGeoCorpMutation({
+ *   variables: {
+ *      geoCorpId: // value for 'geoCorpId'
+ *   },
+ * });
+ */
+export function useDeleteGeoCorpMutation(baseOptions?: Apollo.MutationHookOptions<DeleteGeoCorpMutation, DeleteGeoCorpMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteGeoCorpMutation, DeleteGeoCorpMutationVariables>(DeleteGeoCorpDocument, options);
+      }
+export type DeleteGeoCorpMutationHookResult = ReturnType<typeof useDeleteGeoCorpMutation>;
+export type DeleteGeoCorpMutationResult = Apollo.MutationResult<DeleteGeoCorpMutation>;
+export type DeleteGeoCorpMutationOptions = Apollo.BaseMutationOptions<DeleteGeoCorpMutation, DeleteGeoCorpMutationVariables>;
+export const DeleteLandGroupDocument = gql`
+    mutation DeleteLandGroup($landGroupId: String!) {
+  deleteLandGroup(landGroupId: $landGroupId)
+}
+    `;
+export type DeleteLandGroupMutationFn = Apollo.MutationFunction<DeleteLandGroupMutation, DeleteLandGroupMutationVariables>;
+
+/**
+ * __useDeleteLandGroupMutation__
+ *
+ * To run a mutation, you first call `useDeleteLandGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteLandGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteLandGroupMutation, { data, loading, error }] = useDeleteLandGroupMutation({
+ *   variables: {
+ *      landGroupId: // value for 'landGroupId'
+ *   },
+ * });
+ */
+export function useDeleteLandGroupMutation(baseOptions?: Apollo.MutationHookOptions<DeleteLandGroupMutation, DeleteLandGroupMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteLandGroupMutation, DeleteLandGroupMutationVariables>(DeleteLandGroupDocument, options);
+      }
+export type DeleteLandGroupMutationHookResult = ReturnType<typeof useDeleteLandGroupMutation>;
+export type DeleteLandGroupMutationResult = Apollo.MutationResult<DeleteLandGroupMutation>;
+export type DeleteLandGroupMutationOptions = Apollo.BaseMutationOptions<DeleteLandGroupMutation, DeleteLandGroupMutationVariables>;
 export const GenerateQrCodeDataUrlDocument = gql`
     mutation GenerateQRCodeDataUrl {
   generateQrCodeDataURL
@@ -1896,6 +2231,209 @@ export function useGenerateQrCodeDataUrlMutation(baseOptions?: Apollo.MutationHo
 export type GenerateQrCodeDataUrlMutationHookResult = ReturnType<typeof useGenerateQrCodeDataUrlMutation>;
 export type GenerateQrCodeDataUrlMutationResult = Apollo.MutationResult<GenerateQrCodeDataUrlMutation>;
 export type GenerateQrCodeDataUrlMutationOptions = Apollo.BaseMutationOptions<GenerateQrCodeDataUrlMutation, GenerateQrCodeDataUrlMutationVariables>;
+export const ResolveComplaintDocument = gql`
+    mutation ResolveComplaint($complaintId: String!, $comment: String) {
+  resolveComplaint(input: {complaintId: $complaintId, comment: $comment})
+}
+    `;
+export type ResolveComplaintMutationFn = Apollo.MutationFunction<ResolveComplaintMutation, ResolveComplaintMutationVariables>;
+
+/**
+ * __useResolveComplaintMutation__
+ *
+ * To run a mutation, you first call `useResolveComplaintMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResolveComplaintMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resolveComplaintMutation, { data, loading, error }] = useResolveComplaintMutation({
+ *   variables: {
+ *      complaintId: // value for 'complaintId'
+ *      comment: // value for 'comment'
+ *   },
+ * });
+ */
+export function useResolveComplaintMutation(baseOptions?: Apollo.MutationHookOptions<ResolveComplaintMutation, ResolveComplaintMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ResolveComplaintMutation, ResolveComplaintMutationVariables>(ResolveComplaintDocument, options);
+      }
+export type ResolveComplaintMutationHookResult = ReturnType<typeof useResolveComplaintMutation>;
+export type ResolveComplaintMutationResult = Apollo.MutationResult<ResolveComplaintMutation>;
+export type ResolveComplaintMutationOptions = Apollo.BaseMutationOptions<ResolveComplaintMutation, ResolveComplaintMutationVariables>;
+export const UpdateFarmLotDocument = gql`
+    mutation UpdateFarmLot($farmLotId: String!, $name: String, $landGroupId: String, $coorperativeId: String, $geographicAreaId: String) {
+  updateFarmLot(
+    farmLotId: $farmLotId
+    input: {name: $name, landGroupId: $landGroupId, coorperativeId: $coorperativeId, geographicAreaId: $geographicAreaId}
+  ) {
+    id
+    name
+    landGroupId
+    geographicAreaId
+    coorperativeId
+    archived
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type UpdateFarmLotMutationFn = Apollo.MutationFunction<UpdateFarmLotMutation, UpdateFarmLotMutationVariables>;
+
+/**
+ * __useUpdateFarmLotMutation__
+ *
+ * To run a mutation, you first call `useUpdateFarmLotMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateFarmLotMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateFarmLotMutation, { data, loading, error }] = useUpdateFarmLotMutation({
+ *   variables: {
+ *      farmLotId: // value for 'farmLotId'
+ *      name: // value for 'name'
+ *      landGroupId: // value for 'landGroupId'
+ *      coorperativeId: // value for 'coorperativeId'
+ *      geographicAreaId: // value for 'geographicAreaId'
+ *   },
+ * });
+ */
+export function useUpdateFarmLotMutation(baseOptions?: Apollo.MutationHookOptions<UpdateFarmLotMutation, UpdateFarmLotMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateFarmLotMutation, UpdateFarmLotMutationVariables>(UpdateFarmLotDocument, options);
+      }
+export type UpdateFarmLotMutationHookResult = ReturnType<typeof useUpdateFarmLotMutation>;
+export type UpdateFarmLotMutationResult = Apollo.MutationResult<UpdateFarmLotMutation>;
+export type UpdateFarmLotMutationOptions = Apollo.BaseMutationOptions<UpdateFarmLotMutation, UpdateFarmLotMutationVariables>;
+export const UpdateGeoAreaDocument = gql`
+    mutation UpdateGeoArea($geoAreaId: String!, $name: String, $archived: Boolean) {
+  updateGeoArea(geoAreaId: $geoAreaId, input: {name: $name, archived: $archived}) {
+    id
+    name
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type UpdateGeoAreaMutationFn = Apollo.MutationFunction<UpdateGeoAreaMutation, UpdateGeoAreaMutationVariables>;
+
+/**
+ * __useUpdateGeoAreaMutation__
+ *
+ * To run a mutation, you first call `useUpdateGeoAreaMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGeoAreaMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGeoAreaMutation, { data, loading, error }] = useUpdateGeoAreaMutation({
+ *   variables: {
+ *      geoAreaId: // value for 'geoAreaId'
+ *      name: // value for 'name'
+ *      archived: // value for 'archived'
+ *   },
+ * });
+ */
+export function useUpdateGeoAreaMutation(baseOptions?: Apollo.MutationHookOptions<UpdateGeoAreaMutation, UpdateGeoAreaMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateGeoAreaMutation, UpdateGeoAreaMutationVariables>(UpdateGeoAreaDocument, options);
+      }
+export type UpdateGeoAreaMutationHookResult = ReturnType<typeof useUpdateGeoAreaMutation>;
+export type UpdateGeoAreaMutationResult = Apollo.MutationResult<UpdateGeoAreaMutation>;
+export type UpdateGeoAreaMutationOptions = Apollo.BaseMutationOptions<UpdateGeoAreaMutation, UpdateGeoAreaMutationVariables>;
+export const UpdateGeoCorpDocument = gql`
+    mutation UpdateGeoCorp($geoCorpId: String!, $name: String, $geographicAreaId: String, $landGroupId: String, $archived: Boolean) {
+  updateGeoCorp(
+    geoCorpId: $geoCorpId
+    input: {name: $name, geographicAreaId: $geographicAreaId, landGroupId: $landGroupId, archived: $archived}
+  ) {
+    id
+    name
+    archived
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type UpdateGeoCorpMutationFn = Apollo.MutationFunction<UpdateGeoCorpMutation, UpdateGeoCorpMutationVariables>;
+
+/**
+ * __useUpdateGeoCorpMutation__
+ *
+ * To run a mutation, you first call `useUpdateGeoCorpMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateGeoCorpMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateGeoCorpMutation, { data, loading, error }] = useUpdateGeoCorpMutation({
+ *   variables: {
+ *      geoCorpId: // value for 'geoCorpId'
+ *      name: // value for 'name'
+ *      geographicAreaId: // value for 'geographicAreaId'
+ *      landGroupId: // value for 'landGroupId'
+ *      archived: // value for 'archived'
+ *   },
+ * });
+ */
+export function useUpdateGeoCorpMutation(baseOptions?: Apollo.MutationHookOptions<UpdateGeoCorpMutation, UpdateGeoCorpMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateGeoCorpMutation, UpdateGeoCorpMutationVariables>(UpdateGeoCorpDocument, options);
+      }
+export type UpdateGeoCorpMutationHookResult = ReturnType<typeof useUpdateGeoCorpMutation>;
+export type UpdateGeoCorpMutationResult = Apollo.MutationResult<UpdateGeoCorpMutation>;
+export type UpdateGeoCorpMutationOptions = Apollo.BaseMutationOptions<UpdateGeoCorpMutation, UpdateGeoCorpMutationVariables>;
+export const UpdateLandGroupDocument = gql`
+    mutation UpdateLandGroup($landGroupId: String!, $name: String, $geographicAreaId: String, $archived: Boolean) {
+  updateLandGroup(
+    landGroupId: $landGroupId
+    input: {name: $name, geographicAreaId: $geographicAreaId, archived: $archived}
+  ) {
+    id
+    name
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type UpdateLandGroupMutationFn = Apollo.MutationFunction<UpdateLandGroupMutation, UpdateLandGroupMutationVariables>;
+
+/**
+ * __useUpdateLandGroupMutation__
+ *
+ * To run a mutation, you first call `useUpdateLandGroupMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateLandGroupMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateLandGroupMutation, { data, loading, error }] = useUpdateLandGroupMutation({
+ *   variables: {
+ *      landGroupId: // value for 'landGroupId'
+ *      name: // value for 'name'
+ *      geographicAreaId: // value for 'geographicAreaId'
+ *      archived: // value for 'archived'
+ *   },
+ * });
+ */
+export function useUpdateLandGroupMutation(baseOptions?: Apollo.MutationHookOptions<UpdateLandGroupMutation, UpdateLandGroupMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateLandGroupMutation, UpdateLandGroupMutationVariables>(UpdateLandGroupDocument, options);
+      }
+export type UpdateLandGroupMutationHookResult = ReturnType<typeof useUpdateLandGroupMutation>;
+export type UpdateLandGroupMutationResult = Apollo.MutationResult<UpdateLandGroupMutation>;
+export type UpdateLandGroupMutationOptions = Apollo.BaseMutationOptions<UpdateLandGroupMutation, UpdateLandGroupMutationVariables>;
 export const CreateEquipmentDocument = gql`
     mutation CreateEquipment($name: String!, $costPerDay: Float!) {
   createEquipment(input: {name: $name, costPerDay: $costPerDay}) {
@@ -1938,13 +2476,17 @@ export const GetActivitiesDocument = gql`
     id
     name
     updatedAt
+    createdAt
     adminId
-    admin {
-      fullname
-    }
     cropProfile {
       cropName
     }
+    cropProfileId
+    admin {
+      fullname
+      email
+    }
+    totalCost
   }
 }
     `;
@@ -1980,12 +2522,116 @@ export type GetActivitiesQueryHookResult = ReturnType<typeof useGetActivitiesQue
 export type GetActivitiesLazyQueryHookResult = ReturnType<typeof useGetActivitiesLazyQuery>;
 export type GetActivitiesSuspenseQueryHookResult = ReturnType<typeof useGetActivitiesSuspenseQuery>;
 export type GetActivitiesQueryResult = Apollo.QueryResult<GetActivitiesQuery, GetActivitiesQueryVariables>;
+export const GetCalendarByCooperativeDocument = gql`
+    query GetCalendarByCooperative($cooperativeId: String!) {
+  getCalendarByCooperative(cooperativeId: $cooperativeId) {
+    date
+    activitiesForDay {
+      farmLotname
+      calendarActivity {
+        activity {
+          name
+        }
+        startTime
+        endTime
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCalendarByCooperativeQuery__
+ *
+ * To run a query within a React component, call `useGetCalendarByCooperativeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCalendarByCooperativeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCalendarByCooperativeQuery({
+ *   variables: {
+ *      cooperativeId: // value for 'cooperativeId'
+ *   },
+ * });
+ */
+export function useGetCalendarByCooperativeQuery(baseOptions: Apollo.QueryHookOptions<GetCalendarByCooperativeQuery, GetCalendarByCooperativeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCalendarByCooperativeQuery, GetCalendarByCooperativeQueryVariables>(GetCalendarByCooperativeDocument, options);
+      }
+export function useGetCalendarByCooperativeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCalendarByCooperativeQuery, GetCalendarByCooperativeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCalendarByCooperativeQuery, GetCalendarByCooperativeQueryVariables>(GetCalendarByCooperativeDocument, options);
+        }
+export function useGetCalendarByCooperativeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetCalendarByCooperativeQuery, GetCalendarByCooperativeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetCalendarByCooperativeQuery, GetCalendarByCooperativeQueryVariables>(GetCalendarByCooperativeDocument, options);
+        }
+export type GetCalendarByCooperativeQueryHookResult = ReturnType<typeof useGetCalendarByCooperativeQuery>;
+export type GetCalendarByCooperativeLazyQueryHookResult = ReturnType<typeof useGetCalendarByCooperativeLazyQuery>;
+export type GetCalendarByCooperativeSuspenseQueryHookResult = ReturnType<typeof useGetCalendarByCooperativeSuspenseQuery>;
+export type GetCalendarByCooperativeQueryResult = Apollo.QueryResult<GetCalendarByCooperativeQuery, GetCalendarByCooperativeQueryVariables>;
+export const GetComplaintsFromFarmerDocument = gql`
+    query GetComplaintsFromFarmer($farmerId: String!) {
+  getComplaintsFromFarmer(farmerId: $farmerId) {
+    id
+    complaint
+    description
+    resolved
+    farmer {
+      id
+      name
+      coorperative {
+        name
+      }
+      farmLots {
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetComplaintsFromFarmerQuery__
+ *
+ * To run a query within a React component, call `useGetComplaintsFromFarmerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetComplaintsFromFarmerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetComplaintsFromFarmerQuery({
+ *   variables: {
+ *      farmerId: // value for 'farmerId'
+ *   },
+ * });
+ */
+export function useGetComplaintsFromFarmerQuery(baseOptions: Apollo.QueryHookOptions<GetComplaintsFromFarmerQuery, GetComplaintsFromFarmerQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetComplaintsFromFarmerQuery, GetComplaintsFromFarmerQueryVariables>(GetComplaintsFromFarmerDocument, options);
+      }
+export function useGetComplaintsFromFarmerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetComplaintsFromFarmerQuery, GetComplaintsFromFarmerQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetComplaintsFromFarmerQuery, GetComplaintsFromFarmerQueryVariables>(GetComplaintsFromFarmerDocument, options);
+        }
+export function useGetComplaintsFromFarmerSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetComplaintsFromFarmerQuery, GetComplaintsFromFarmerQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetComplaintsFromFarmerQuery, GetComplaintsFromFarmerQueryVariables>(GetComplaintsFromFarmerDocument, options);
+        }
+export type GetComplaintsFromFarmerQueryHookResult = ReturnType<typeof useGetComplaintsFromFarmerQuery>;
+export type GetComplaintsFromFarmerLazyQueryHookResult = ReturnType<typeof useGetComplaintsFromFarmerLazyQuery>;
+export type GetComplaintsFromFarmerSuspenseQueryHookResult = ReturnType<typeof useGetComplaintsFromFarmerSuspenseQuery>;
+export type GetComplaintsFromFarmerQueryResult = Apollo.QueryResult<GetComplaintsFromFarmerQuery, GetComplaintsFromFarmerQueryVariables>;
 export const GetCropProfilesDocument = gql`
     query GetCropProfiles {
   getCropProfiles {
     id
     cropName
     lifeCycle
+    createdAt
   }
 }
     `;
@@ -2117,6 +2763,10 @@ export const GetFarmLotsDocument = gql`
       id
       name
     }
+    geographicArea {
+      id
+      name
+    }
     archived
   }
 }
@@ -2158,7 +2808,9 @@ export const GetFarmerProfilesDocument = gql`
   getFarmerProfiles {
     name
     id
-    email
+    farmLots {
+      name
+    }
   }
 }
     `;
@@ -2235,6 +2887,57 @@ export type GetGeoAreasQueryHookResult = ReturnType<typeof useGetGeoAreasQuery>;
 export type GetGeoAreasLazyQueryHookResult = ReturnType<typeof useGetGeoAreasLazyQuery>;
 export type GetGeoAreasSuspenseQueryHookResult = ReturnType<typeof useGetGeoAreasSuspenseQuery>;
 export type GetGeoAreasQueryResult = Apollo.QueryResult<GetGeoAreasQuery, GetGeoAreasQueryVariables>;
+export const GetGeoCorpByIdDocument = gql`
+    query GetGeoCorpById($geoCorpId: String!) {
+  getGeoCorpById(geoCorpId: $geoCorpId) {
+    id
+    name
+    archived
+    createdAt
+    landGroup {
+      name
+      id
+    }
+    geographicArea {
+      name
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetGeoCorpByIdQuery__
+ *
+ * To run a query within a React component, call `useGetGeoCorpByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGeoCorpByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGeoCorpByIdQuery({
+ *   variables: {
+ *      geoCorpId: // value for 'geoCorpId'
+ *   },
+ * });
+ */
+export function useGetGeoCorpByIdQuery(baseOptions: Apollo.QueryHookOptions<GetGeoCorpByIdQuery, GetGeoCorpByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetGeoCorpByIdQuery, GetGeoCorpByIdQueryVariables>(GetGeoCorpByIdDocument, options);
+      }
+export function useGetGeoCorpByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetGeoCorpByIdQuery, GetGeoCorpByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetGeoCorpByIdQuery, GetGeoCorpByIdQueryVariables>(GetGeoCorpByIdDocument, options);
+        }
+export function useGetGeoCorpByIdSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetGeoCorpByIdQuery, GetGeoCorpByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetGeoCorpByIdQuery, GetGeoCorpByIdQueryVariables>(GetGeoCorpByIdDocument, options);
+        }
+export type GetGeoCorpByIdQueryHookResult = ReturnType<typeof useGetGeoCorpByIdQuery>;
+export type GetGeoCorpByIdLazyQueryHookResult = ReturnType<typeof useGetGeoCorpByIdLazyQuery>;
+export type GetGeoCorpByIdSuspenseQueryHookResult = ReturnType<typeof useGetGeoCorpByIdSuspenseQuery>;
+export type GetGeoCorpByIdQueryResult = Apollo.QueryResult<GetGeoCorpByIdQuery, GetGeoCorpByIdQueryVariables>;
 export const GetGeoCorpsDocument = gql`
     query GetGeoCorps {
   getGeoCorps {
@@ -2246,9 +2949,11 @@ export const GetGeoCorpsDocument = gql`
     }
     geographicArea {
       name
+      id
     }
     landGroup {
       name
+      id
     }
   }
 }
@@ -2335,7 +3040,7 @@ export const GetLandGroupsDocument = gql`
       name
       id
     }
-    coorperative {
+    cooperative {
       name
     }
   }
@@ -2413,3 +3118,53 @@ export type GetUnitsQueryHookResult = ReturnType<typeof useGetUnitsQuery>;
 export type GetUnitsLazyQueryHookResult = ReturnType<typeof useGetUnitsLazyQuery>;
 export type GetUnitsSuspenseQueryHookResult = ReturnType<typeof useGetUnitsSuspenseQuery>;
 export type GetUnitsQueryResult = Apollo.QueryResult<GetUnitsQuery, GetUnitsQueryVariables>;
+export const GetUpcomingActivitiesByCooperativeDocument = gql`
+    query GetUpcomingActivitiesByCooperative($cooperativeId: String!) {
+  getUpcomingActivitiesByCooperative(cooperativeId: $cooperativeId) {
+    date
+    activitiesForDay {
+      farmLotname
+      calendarActivity {
+        activity {
+          name
+        }
+        startTime
+        endTime
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUpcomingActivitiesByCooperativeQuery__
+ *
+ * To run a query within a React component, call `useGetUpcomingActivitiesByCooperativeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUpcomingActivitiesByCooperativeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUpcomingActivitiesByCooperativeQuery({
+ *   variables: {
+ *      cooperativeId: // value for 'cooperativeId'
+ *   },
+ * });
+ */
+export function useGetUpcomingActivitiesByCooperativeQuery(baseOptions: Apollo.QueryHookOptions<GetUpcomingActivitiesByCooperativeQuery, GetUpcomingActivitiesByCooperativeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUpcomingActivitiesByCooperativeQuery, GetUpcomingActivitiesByCooperativeQueryVariables>(GetUpcomingActivitiesByCooperativeDocument, options);
+      }
+export function useGetUpcomingActivitiesByCooperativeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUpcomingActivitiesByCooperativeQuery, GetUpcomingActivitiesByCooperativeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUpcomingActivitiesByCooperativeQuery, GetUpcomingActivitiesByCooperativeQueryVariables>(GetUpcomingActivitiesByCooperativeDocument, options);
+        }
+export function useGetUpcomingActivitiesByCooperativeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUpcomingActivitiesByCooperativeQuery, GetUpcomingActivitiesByCooperativeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUpcomingActivitiesByCooperativeQuery, GetUpcomingActivitiesByCooperativeQueryVariables>(GetUpcomingActivitiesByCooperativeDocument, options);
+        }
+export type GetUpcomingActivitiesByCooperativeQueryHookResult = ReturnType<typeof useGetUpcomingActivitiesByCooperativeQuery>;
+export type GetUpcomingActivitiesByCooperativeLazyQueryHookResult = ReturnType<typeof useGetUpcomingActivitiesByCooperativeLazyQuery>;
+export type GetUpcomingActivitiesByCooperativeSuspenseQueryHookResult = ReturnType<typeof useGetUpcomingActivitiesByCooperativeSuspenseQuery>;
+export type GetUpcomingActivitiesByCooperativeQueryResult = Apollo.QueryResult<GetUpcomingActivitiesByCooperativeQuery, GetUpcomingActivitiesByCooperativeQueryVariables>;

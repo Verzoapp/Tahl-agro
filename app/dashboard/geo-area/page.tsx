@@ -1,16 +1,38 @@
 "use client"
 import AddGeoAreaModal from "@/components/modals/addGeoAreaModal";
 import { useGetGeoAreasQuery, useGetLandGroupsQuery } from "@/src/generated/graphql";
+import UpdateGeoAreaModal from "@/components/modals/updateGeoArea";
+import DeleteGeoAreaModal from "@/components/modals/deleteGeoArea";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
+
+interface GeographicArea {
+  id?: string ;
+  name?: string ;
+  createdAt?: any; // You might want to replace 'any' with a more specific type
+}
 
 const Cooperatives = () => {
   const [openAddGeoAreaModal, setOpenAddGeoAreaModal] = useState(false)
-  const getLandGroups = useGetLandGroupsQuery()
-  const landList = getLandGroups.data?.getLandGroups
   const getGeoAreas = useGetGeoAreasQuery()
   const geoAreaList = getGeoAreas.data?.getGeoAreas
+  const [geoAreaData, setGeoAreaData] = useState<GeographicArea | null | undefined>(null);
+  const [openUpdateGeoAreaModal, setOpenUpdateGeoAreaModal] = useState(false)
+  const [openDeleteGeoAreaModal, setOpenDeleteGeoAreaModal] = useState(false)
+  const [geoAreaDefaultName, setGeoAreaDefaultName] = useState("") 
+  const [geoAreaId, setGeoAreaId] = useState("")
+
+  useEffect(() => {
+    const handleClick = () => {
+      setGeoAreaId(geoAreaData?.id!)
+      setGeoAreaDefaultName(geoAreaData?.name!)
+    }
+    handleClick()
+  }, [geoAreaData])
+
+  console.log(geoAreaId, geoAreaData)
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between space-y-2">
@@ -75,6 +97,16 @@ const Cooperatives = () => {
                           {formattedDate}
                         </div>
                       </td>
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-700">
+                        <button onClick={() => {setOpenUpdateGeoAreaModal(true); setGeoAreaData(item as GeographicArea | null | undefined) }} type="button" className="font-normal tracking-tight text-[#2aa249]">
+                          Update
+                        </button>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-700">
+                        <button onClick={() => {setOpenDeleteGeoAreaModal(true); setGeoAreaData(item as GeographicArea | null | undefined)}} type="button" className="font-normal tracking-tight text-red-700">
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   )
                 })}
@@ -84,6 +116,8 @@ const Cooperatives = () => {
         </div>
       </div>
       <AddGeoAreaModal openAddGeoAreaModal={openAddGeoAreaModal} setOpenAddGeoAreaModal={setOpenAddGeoAreaModal} />
+      <UpdateGeoAreaModal openUpdateGeoAreaModal={openUpdateGeoAreaModal} setOpenUpdateGeoAreaModal={setOpenUpdateGeoAreaModal} geoAreaDefaultName={geoAreaDefaultName} geoAreaId={geoAreaId}/>
+      <DeleteGeoAreaModal openDeleteGeoAreaModal={openDeleteGeoAreaModal} setOpenDeleteGeoAreaModal={setOpenDeleteGeoAreaModal} geoAreaId={geoAreaId} />
     </div>
   );
 };

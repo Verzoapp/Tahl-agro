@@ -1,0 +1,3 @@
+mutation DeleteInput($inputId: String!){
+  deleteInput(inputId:$inputId)
+}

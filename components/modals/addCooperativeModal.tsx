@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
 import { client } from "@/src/apollo/ApolloClient";
 import { useCreateGeoCorpMutation, useGetGeoAreasQuery, useGetLandGroupsQuery } from "@/src/generated/graphql";
+import { toast } from "../ui/use-toast";
 
 interface AddCooperativeModalProps {
   openAddCooperativeModal: boolean;
@@ -28,6 +29,8 @@ type FormData = {
   name: string;
 };
 
+
+
 const AddCooperativeModal = ({
   openAddCooperativeModal,
   setOpenAddCooperativeModal,
@@ -36,9 +39,7 @@ const AddCooperativeModal = ({
   const landGroups = useGetLandGroupsQuery()
   const geoAreas = useGetGeoAreasQuery()
   const landGroupList = landGroups.data?.getLandGroups
-  const geoAreaList = geoAreas.data?.getGeoAreas
   const [openLandGroupDropDown, setOpenLandGroupDropDown] = useState(false)
-  const [openGeoAreaDropDown, setOpenGeoAreaDropDown] = useState(false);
   const [landGroupId, setLandGroupId] = useState("")
   const [geoAreaId, setGeoAreaId] = useState("");
 
@@ -57,6 +58,24 @@ const AddCooperativeModal = ({
     }
   }, [landGroupId]);
 
+  const showSuccessToast = () => {
+    toast({
+      variant: "default",
+      title: "Success",
+      description: "Cooperative Added",
+      duration: 3000,
+    });
+  };
+  
+  const showFailureToast = () => {
+    toast({
+      variant: "destructive",
+      title: "Uh oh! Something went wrong.",
+      description: "There was a problem with your request.",
+      duration: 3000,
+    });
+  };
+
   const onSubmitHandler = async (form: FormData) => {
     try {
       const response = createGeoCorpMutation({
@@ -70,8 +89,10 @@ const AddCooperativeModal = ({
       client.refetchQueries({
         include: "active",
       });
+      showSuccessToast()
     } catch (error) {
       console.error(error);
+      showFailureToast()
     }
   };
   console.log(geoAreaId)
@@ -151,7 +172,7 @@ const AddCooperativeModal = ({
                             <CommandEmpty>No land group found.</CommandEmpty>
                             <CommandGroup>
                               {landGroupList?.map((item) => (
-                                item?.coorperative === null && (
+                                item?.cooperative === null && (
                                     <CommandItem
                                       key={item?.id}
                                       value={item?.id!}

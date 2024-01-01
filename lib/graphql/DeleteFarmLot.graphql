@@ -1,0 +1,3 @@
+mutation DeleteFarmLot($farmLotId: String!){
+  deleteFarmLot(farmLotId:$farmLotId)
+}

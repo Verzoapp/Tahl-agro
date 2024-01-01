@@ -1,5 +1,6 @@
 "use client"
 import Logo from "@/components/icons/Logo";
+import { toast } from "@/components/ui/use-toast";
 import { saveToken } from "@/lib/auth";
 import { useAdminLoginMutation } from "@/src/generated/graphql";
 import Link from "next/link";
@@ -25,6 +26,15 @@ const Login = () => {
   const router = useRouter();
   const [adminLoginMutation, { data, loading, error }] = useAdminLoginMutation()
 
+  const showFailureToast = () => {
+    toast({
+      variant: "destructive",
+      title: "Uh oh! Something went wrong.",
+      description: "There was a problem with your request.",
+      duration: 3000,
+    });
+  };
+
   const onSubmitHandler =async (form: FormData) => {
     try {
       const response = await adminLoginMutation({
@@ -37,6 +47,7 @@ const Login = () => {
       router.push("/dashboard")
     } catch (error) {
       console.error(error);
+      showFailureToast()
     }
   }
   

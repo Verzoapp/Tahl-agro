@@ -8,9 +8,11 @@ query GetGeoCorps{
     }
     geographicArea{
       name
+      id
     }
     landGroup{
       name
+      id
     }
     
   }

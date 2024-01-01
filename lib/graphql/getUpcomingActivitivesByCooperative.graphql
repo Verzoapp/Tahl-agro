@@ -1,0 +1,15 @@
+query GetUpcomingActivitiesByCooperative($cooperativeId: String!){
+  getUpcomingActivitiesByCooperative(cooperativeId:$cooperativeId){
+    date
+    activitiesForDay{
+      farmLotname
+      calendarActivity{
+        activity{
+          name
+        }
+        startTime
+        endTime
+      }
+    }
+  }
+}

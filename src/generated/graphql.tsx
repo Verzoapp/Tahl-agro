@@ -1642,7 +1642,7 @@ export type GetFarmLotByLandGroupQuery = { __typename?: 'Query', getFarmLotByLan
 export type GetFarmerProfilesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFarmerProfilesQuery = { __typename?: 'Query', getFarmerProfiles: Array<{ __typename?: 'Farmer', name?: string | null, id?: string | null, farmLots?: Array<{ __typename?: 'FarmLot', name?: string | null } | null> | null } | null> };
+export type GetFarmerProfilesQuery = { __typename?: 'Query', getFarmerProfiles: Array<{ __typename?: 'Farmer', name?: string | null, id?: string | null, farmLots?: Array<{ __typename?: 'FarmLot', name?: string | null } | null> | null, coorperative?: { __typename?: 'Cooperative', name?: string | null } | null } | null> };
 
 export type GetGeoAreasQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2909,6 +2909,12 @@ export const GetFarmerProfilesDocument = gql`
   getFarmerProfiles {
     name
     id
+    farmLots {
+      name
+    }
+    coorperative {
+      name
+    }
     farmLots {
       name
     }

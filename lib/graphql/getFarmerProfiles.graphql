@@ -5,5 +5,11 @@ query GetFarmerProfiles {
     farmLots{
       name
     }
+    coorperative{
+      name
+    }
+    farmLots{
+      name
+    }
   }
 }

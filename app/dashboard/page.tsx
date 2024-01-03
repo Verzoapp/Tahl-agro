@@ -47,7 +47,7 @@ const Dashboard = () => {
               <TabsTrigger className=" text-gray-600" value="overview">
                 Overview
               </TabsTrigger>
-              <TabsTrigger value="analytics" disabled>
+              {/* <TabsTrigger value="analytics" disabled>
                 Analytics
               </TabsTrigger>
               <TabsTrigger value="reports" disabled>
@@ -55,7 +55,7 @@ const Dashboard = () => {
               </TabsTrigger>
               <TabsTrigger value="notifications" disabled>
                 Notifications
-              </TabsTrigger>
+              </TabsTrigger> */}
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -115,7 +115,7 @@ const Dashboard = () => {
                   </CardContent>
                 </Card>
               </div>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-8">
+              {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-8">
                 <Card className="col-span-4">
                   <CardHeader>
                     <CardTitle className=" text-gray-600">
@@ -221,7 +221,7 @@ const Dashboard = () => {
                     <RecentSales />
                   </CardContent>
                 </Card>
-              </div>
+              </div> */}
             </TabsContent>
           </Tabs>
         </div>

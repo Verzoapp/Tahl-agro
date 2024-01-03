@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
 import { client } from "@/src/apollo/ApolloClient";
 import { useCreateLandGroupMutation, useDeleteLandGroupMutation, useGetGeoAreasQuery } from "@/src/generated/graphql";
+import { toast } from "../ui/use-toast";
 
 interface DeleteLandGroupModalProps {
   openDeleteLandGroupModal: boolean;
@@ -42,6 +43,25 @@ const DeleteLandGroupModal = ({
     handleSubmit,
     getValues,
   } = useForm<FormData>();
+
+  const showSuccessToast = () => {
+    toast({
+      variant: "default",
+      title: "Success",
+      description: "Land Group Deleted",
+      duration: 3000,
+    });
+  };
+  
+  const showFailureToast = () => {
+    toast({
+      variant: "destructive",
+      title: "Uh oh! Something went wrong.",
+      description: "There was a problem with your request.",
+      duration: 3000,
+    });
+  };
+
   const onSubmitHandler = async (form: FormData) => {
     try {
       const response = await deleteLandGroupMutation({
@@ -53,8 +73,10 @@ const DeleteLandGroupModal = ({
       client.refetchQueries({
         include: "active",
       });
+      showSuccessToast()
     } catch (error) {
       console.error(error);
+      showFailureToast()
     }
   };
   return (

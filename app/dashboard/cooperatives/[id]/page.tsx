@@ -93,13 +93,12 @@ const Cooperative = () => {
         </h2>
         <div className="flex items-center space-x-2">
           {/* <CalendarDateRangePicker /> */}
-          <button
-            type="button"
-            className="inline-flex items-center rounded border border-transparent bg-[#2aa249] px-4 py-[6px] text-sm font-normal text-white hover:bg-primary-verzobluehover focus:outline-none"
-            onClick={() => {handleClick()}}
+          <Link
+            href={`/dashboard/cooperatives/${id}/createFarmer`}
+            className="mt-8 block text-center rounded-md bg-[#2aa249] hover:bg-[#238c3d] px-5 py-2 text-sm font-medium text-white"
           >
-            Create Farm Lot
-          </button>
+            Create Farmer
+          </Link>
         </div>
       </div>
         <div className="mt-20 flex justify-between">
@@ -120,10 +119,17 @@ const Cooperative = () => {
             <p className="text-black mt-2 font-medium">{formattedDate}</p>
           </div>
         </div>
-        <div className="mt-32">
+        <div className="mt-32 flex items-center justify-between">
           <h2 className="text-2xl font-bold tracking-tight text-gray-600">
             Farm Lots
-          </h2>   
+          </h2>
+            <button
+              type="button"
+              className="inline-flex items-center rounded border border-transparent bg-[#2aa249] px-4 py-[6px] text-sm font-normal text-white hover:bg-primary-verzobluehover focus:outline-none"
+              onClick={() => {handleClick()}}
+            >
+              Create Farm Lot
+            </button>  
         </div>
         <div className="mt-4 flow-root">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

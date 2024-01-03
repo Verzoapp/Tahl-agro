@@ -1,0 +1,14 @@
+mutation CreateFarmerProfile($name: String!, $email: String!, $coorperativeId: String!, $farmLotIds: [String!]!){
+  createFarmerProfile(input:{
+    name:$name
+    email:$email
+    coorperativeId:$coorperativeId
+    farmLotIds:$farmLotIds
+  }){
+    farmerProfile{
+      id
+      email
+    }
+    passcode
+  }
+}

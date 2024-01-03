@@ -185,7 +185,7 @@ const CalendarPage = () => {
   const handleClick = (activity:any) => {
       setShowActivity(activity)
   }
-
+  
   const getAllUpcomingActivities = upcomingActivitiesList?.map(item => item?.activitiesForDay?.map(item => item))
   const getCorpName = geoCorpList?.find(item => item?.id === coorperativeId)?.name
   

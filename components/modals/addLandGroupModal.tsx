@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
 import { client } from "@/src/apollo/ApolloClient";
 import { useCreateLandGroupMutation, useGetGeoAreasQuery } from "@/src/generated/graphql";
+import { toast } from "../ui/use-toast";
 
 interface AddLandGroupModalProps {
   openAddLandGroupModal: boolean;
@@ -43,6 +44,25 @@ const AddLandGroupModal = ({
     handleSubmit,
     getValues,
   } = useForm<FormData>();
+
+  const showSuccessToast = () => {
+    toast({
+      variant: "default",
+      title: "Success",
+      description: "Land Group Added",
+      duration: 3000,
+    });
+  };
+  
+  const showFailureToast = () => {
+    toast({
+      variant: "destructive",
+      title: "Uh oh! Something went wrong.",
+      description: "There was a problem with your request.",
+      duration: 3000,
+    });
+  };
+
   const onSubmitHandler = async (form: FormData) => {
     try {
       const response = await createLandGroupMutation({
@@ -55,8 +75,10 @@ const AddLandGroupModal = ({
       client.refetchQueries({
         include: "active",
       });
+      showSuccessToast()
     } catch (error) {
       console.error(error);
+      showFailureToast()
     }
   };
   return (

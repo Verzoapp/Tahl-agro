@@ -1462,6 +1462,16 @@ export type CreateFarmLotMutationVariables = Exact<{
 
 export type CreateFarmLotMutation = { __typename?: 'Mutation', createFarmLot?: { __typename?: 'FarmLot', id?: string | null, name?: string | null, landGroupId?: string | null, coorperativeId?: string | null, createdAt?: any | null } | null };
 
+export type CreateFarmerProfileMutationVariables = Exact<{
+  name: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+  coorperativeId: Scalars['String']['input'];
+  farmLotIds: Array<Scalars['String']['input']> | Scalars['String']['input'];
+}>;
+
+
+export type CreateFarmerProfileMutation = { __typename?: 'Mutation', createFarmerProfile?: { __typename?: 'CreateFarmerResponse', passcode?: string | null, farmerProfile?: { __typename?: 'Farmer', id?: string | null, email?: string | null } | null } | null };
+
 export type CreateGeoAreaMutationVariables = Exact<{
   name: Scalars['String']['input'];
 }>;
@@ -1622,6 +1632,13 @@ export type GetFarmLotsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetFarmLotsQuery = { __typename?: 'Query', getFarmLots: Array<{ __typename?: 'FarmLot', id?: string | null, name?: string | null, archived?: boolean | null, landGroup?: { __typename?: 'LandGroup', id?: string | null, name?: string | null } | null, coorperative?: { __typename?: 'Cooperative', id?: string | null, name?: string | null } | null, geographicArea?: { __typename?: 'GeographicArea', id?: string | null, name?: string | null } | null } | null> };
 
+export type GetFarmLotByLandGroupQueryVariables = Exact<{
+  landGroupId: Scalars['String']['input'];
+}>;
+
+
+export type GetFarmLotByLandGroupQuery = { __typename?: 'Query', getFarmLotByLandGroup: Array<{ __typename?: 'FarmLot', id?: string | null, name?: string | null, archived?: boolean | null } | null> };
+
 export type GetFarmerProfilesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1637,7 +1654,7 @@ export type GetGeoCorpByIdQueryVariables = Exact<{
 }>;
 
 
-export type GetGeoCorpByIdQuery = { __typename?: 'Query', getGeoCorpById?: { __typename?: 'Cooperative', id?: string | null, name?: string | null, archived?: boolean | null, createdAt?: any | null, landGroup?: { __typename?: 'LandGroup', name?: string | null, id?: string | null } | null, geographicArea?: { __typename?: 'GeographicArea', name?: string | null, id?: string | null } | null } | null };
+export type GetGeoCorpByIdQuery = { __typename?: 'Query', getGeoCorpById?: { __typename?: 'Cooperative', id?: string | null, name?: string | null, archived?: boolean | null, createdAt?: any | null, landGroup?: { __typename?: 'LandGroup', name?: string | null, id?: string | null } | null, geographicArea?: { __typename?: 'GeographicArea', name?: string | null, id?: string | null } | null, farmLots?: Array<{ __typename?: 'FarmLot', name?: string | null, id?: string | null } | null> | null } | null };
 
 export type GetGeoCorpsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1935,6 +1952,48 @@ export function useCreateFarmLotMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateFarmLotMutationHookResult = ReturnType<typeof useCreateFarmLotMutation>;
 export type CreateFarmLotMutationResult = Apollo.MutationResult<CreateFarmLotMutation>;
 export type CreateFarmLotMutationOptions = Apollo.BaseMutationOptions<CreateFarmLotMutation, CreateFarmLotMutationVariables>;
+export const CreateFarmerProfileDocument = gql`
+    mutation CreateFarmerProfile($name: String!, $email: String!, $coorperativeId: String!, $farmLotIds: [String!]!) {
+  createFarmerProfile(
+    input: {name: $name, email: $email, coorperativeId: $coorperativeId, farmLotIds: $farmLotIds}
+  ) {
+    farmerProfile {
+      id
+      email
+    }
+    passcode
+  }
+}
+    `;
+export type CreateFarmerProfileMutationFn = Apollo.MutationFunction<CreateFarmerProfileMutation, CreateFarmerProfileMutationVariables>;
+
+/**
+ * __useCreateFarmerProfileMutation__
+ *
+ * To run a mutation, you first call `useCreateFarmerProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateFarmerProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createFarmerProfileMutation, { data, loading, error }] = useCreateFarmerProfileMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      email: // value for 'email'
+ *      coorperativeId: // value for 'coorperativeId'
+ *      farmLotIds: // value for 'farmLotIds'
+ *   },
+ * });
+ */
+export function useCreateFarmerProfileMutation(baseOptions?: Apollo.MutationHookOptions<CreateFarmerProfileMutation, CreateFarmerProfileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateFarmerProfileMutation, CreateFarmerProfileMutationVariables>(CreateFarmerProfileDocument, options);
+      }
+export type CreateFarmerProfileMutationHookResult = ReturnType<typeof useCreateFarmerProfileMutation>;
+export type CreateFarmerProfileMutationResult = Apollo.MutationResult<CreateFarmerProfileMutation>;
+export type CreateFarmerProfileMutationOptions = Apollo.BaseMutationOptions<CreateFarmerProfileMutation, CreateFarmerProfileMutationVariables>;
 export const CreateGeoAreaDocument = gql`
     mutation CreateGeoArea($name: String!) {
   createGeoArea(name: $name) {
@@ -2803,6 +2862,48 @@ export type GetFarmLotsQueryHookResult = ReturnType<typeof useGetFarmLotsQuery>;
 export type GetFarmLotsLazyQueryHookResult = ReturnType<typeof useGetFarmLotsLazyQuery>;
 export type GetFarmLotsSuspenseQueryHookResult = ReturnType<typeof useGetFarmLotsSuspenseQuery>;
 export type GetFarmLotsQueryResult = Apollo.QueryResult<GetFarmLotsQuery, GetFarmLotsQueryVariables>;
+export const GetFarmLotByLandGroupDocument = gql`
+    query GetFarmLotByLandGroup($landGroupId: String!) {
+  getFarmLotByLandGroup(landGroupId: $landGroupId) {
+    id
+    name
+    archived
+  }
+}
+    `;
+
+/**
+ * __useGetFarmLotByLandGroupQuery__
+ *
+ * To run a query within a React component, call `useGetFarmLotByLandGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetFarmLotByLandGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetFarmLotByLandGroupQuery({
+ *   variables: {
+ *      landGroupId: // value for 'landGroupId'
+ *   },
+ * });
+ */
+export function useGetFarmLotByLandGroupQuery(baseOptions: Apollo.QueryHookOptions<GetFarmLotByLandGroupQuery, GetFarmLotByLandGroupQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetFarmLotByLandGroupQuery, GetFarmLotByLandGroupQueryVariables>(GetFarmLotByLandGroupDocument, options);
+      }
+export function useGetFarmLotByLandGroupLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetFarmLotByLandGroupQuery, GetFarmLotByLandGroupQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetFarmLotByLandGroupQuery, GetFarmLotByLandGroupQueryVariables>(GetFarmLotByLandGroupDocument, options);
+        }
+export function useGetFarmLotByLandGroupSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetFarmLotByLandGroupQuery, GetFarmLotByLandGroupQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetFarmLotByLandGroupQuery, GetFarmLotByLandGroupQueryVariables>(GetFarmLotByLandGroupDocument, options);
+        }
+export type GetFarmLotByLandGroupQueryHookResult = ReturnType<typeof useGetFarmLotByLandGroupQuery>;
+export type GetFarmLotByLandGroupLazyQueryHookResult = ReturnType<typeof useGetFarmLotByLandGroupLazyQuery>;
+export type GetFarmLotByLandGroupSuspenseQueryHookResult = ReturnType<typeof useGetFarmLotByLandGroupSuspenseQuery>;
+export type GetFarmLotByLandGroupQueryResult = Apollo.QueryResult<GetFarmLotByLandGroupQuery, GetFarmLotByLandGroupQueryVariables>;
 export const GetFarmerProfilesDocument = gql`
     query GetFarmerProfiles {
   getFarmerProfiles {
@@ -2899,6 +3000,10 @@ export const GetGeoCorpByIdDocument = gql`
       id
     }
     geographicArea {
+      name
+      id
+    }
+    farmLots {
       name
       id
     }

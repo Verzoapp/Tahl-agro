@@ -12,6 +12,10 @@ query GetGeoCorpById($geoCorpId: String!){
       name
       id
     }
+    farmLots{
+      name
+      id
+    }
     
   }
 }

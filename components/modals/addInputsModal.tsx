@@ -15,6 +15,7 @@ import { Listbox } from '@headlessui/react'
 import { useForm } from "react-hook-form";
 import { client } from "@/src/apollo/ApolloClient";
 import { useCreateInputMutation, useGetInputCategoriesQuery, useGetInputsQuery, useGetUnitsQuery } from "@/src/generated/graphql";
+import { toast } from "../ui/use-toast";
 
 interface AddTaskModalProps {
   openAddInputModal: boolean;
@@ -48,7 +49,27 @@ const AddInputModal = ({
     handleSubmit,
     getValues,
   } = useForm<FormData>();
+  
   const cost = parseInt(costValue)
+
+  const showSuccessToast = () => {
+    toast({
+      variant: "default",
+      title: "Success",
+      description: "Farm Input Added",
+      duration: 3000,
+    });
+  };
+  
+  const showFailureToast = () => {
+    toast({
+      variant: "destructive",
+      title: "Uh oh! Something went wrong.",
+      description: "There was a problem with your request.",
+      duration: 3000,
+    });
+  };
+
   const onSubmitHandler = async (form: FormData) => {
     try {
       const response = await createInputMutation({
@@ -63,9 +84,10 @@ const AddInputModal = ({
       client.refetchQueries({
         include: "active",
       });
+      showSuccessToast()
     } catch (error) {
       console.error(error);
-      console.log(error)
+      showFailureToast()
     }
   };
   return (

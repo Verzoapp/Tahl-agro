@@ -32,7 +32,7 @@ const DeleteFarmLotModal = ({
     toast({
       variant: "default",
       title: "Success",
-      description: "Cooperative deleted",
+      description: "Farm Lot deleted",
       duration: 3000,
     });
   };

@@ -4,6 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useForm } from "react-hook-form";
 import { client } from "@/src/apollo/ApolloClient";
 import { useCreateEquipmentMutation, useCreateFarmLotMutation, useGetCropProfilesQuery, useGetGeoAreasQuery, useGetGeoCorpsQuery, useGetLandGroupsQuery } from "@/src/generated/graphql";
+import { toast } from "../ui/use-toast";
 
 interface AddEquipmentModalProps {
   openAddEquipmentModal: boolean;
@@ -27,6 +28,25 @@ const AddEquipmentModal = ({
     getValues,
   } = useForm<FormData>();
   const cost = parseInt(costValue)
+
+  const showSuccessToast = () => {
+    toast({
+      variant: "default",
+      title: "Success",
+      description: "Equipment Added",
+      duration: 3000,
+    });
+  };
+  
+  const showFailureToast = () => {
+    toast({
+      variant: "destructive",
+      title: "Uh oh! Something went wrong.",
+      description: "There was a problem with your request.",
+      duration: 3000,
+    });
+  };
+
   const onSubmitHandler = async (form: FormData) => {
     try {
       const response = await createEquipmentMutation({
@@ -39,8 +59,10 @@ const AddEquipmentModal = ({
       client.refetchQueries({
         include: "active",
       });
+      showSuccessToast()
     } catch (error) {
       console.error(error);
+      showFailureToast()
     }
   };
   return (

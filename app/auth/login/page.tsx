@@ -42,7 +42,7 @@ const Login = () => {
            ...form,
         },
       })
-    const responseToken = response.data?.adminLogin.access_token;
+      const responseToken = response.data?.adminLogin.access_token;
       await saveToken(responseToken!);
       router.push("/dashboard")
     } catch (error) {

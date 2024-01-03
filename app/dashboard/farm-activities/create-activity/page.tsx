@@ -68,7 +68,6 @@ const CreateActivity = () => {
         equipmentId: "",
         quantity: 0,
       };
-  
       setEquipList([...equipList, newItem]);
     };
 

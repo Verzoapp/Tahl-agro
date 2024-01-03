@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form";
 import { client } from "@/src/apollo/ApolloClient";
 import { useCreateFarmLotMutation, useGetCropProfilesQuery, useGetGeoAreasQuery, useGetGeoCorpsQuery, useGetLandGroupsQuery } from "@/src/generated/graphql";
+import { toast } from "../ui/use-toast";
 
 interface AddFarmLotsModalProps {
   openAddFarmLotModal: boolean;
@@ -52,6 +53,25 @@ const AddFarmLotsModal = ({
     handleSubmit,
     getValues,
   } = useForm<FormData>();
+
+  const showSuccessToast = () => {
+    toast({
+      variant: "default",
+      title: "Success",
+      description: "Farm Lot Added",
+      duration: 3000,
+    });
+  };
+  
+  const showFailureToast = () => {
+    toast({
+      variant: "destructive",
+      title: "Uh oh! Something went wrong.",
+      description: "There was a problem with your request.",
+      duration: 3000,
+    });
+  };
+
   const onSubmitHandler = async (form: FormData) => {
     try {
       const response = await createFarmLotMutation(
@@ -69,8 +89,10 @@ const AddFarmLotsModal = ({
       client.refetchQueries({
         include: "active",
       });
+      showSuccessToast()
     } catch (error) {
       console.error(error);
+      showFailureToast()
     }
   };
 

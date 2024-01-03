@@ -4,6 +4,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useForm } from "react-hook-form";
 import { client } from "@/src/apollo/ApolloClient";
 import { useCreateEquipmentMutation, useCreateFarmLotMutation, useCreateGeoAreaMutation, useGetCropProfilesQuery, useGetGeoAreasQuery, useGetGeoCorpsQuery, useGetLandGroupsQuery } from "@/src/generated/graphql";
+import { toast } from "../ui/use-toast";
 
 interface AddGeoAreaModalProps {
   openAddGeoAreaModal: boolean;
@@ -26,6 +27,24 @@ const AddGeoAreaModal = ({
     getValues,
   } = useForm<FormData>();
 
+  const showSuccessToast = () => {
+    toast({
+      variant: "default",
+      title: "Success",
+      description: "Geographical Area Added",
+      duration: 3000,
+    });
+  };
+  
+  const showFailureToast = () => {
+    toast({
+      variant: "destructive",
+      title: "Uh oh! Something went wrong.",
+      description: "There was a problem with your request.",
+      duration: 3000,
+    });
+  };
+
   const onSubmitHandler = async (form: FormData) => {
     try {
       const response = createGeoAreaMutation({
@@ -37,8 +56,10 @@ const AddGeoAreaModal = ({
       client.refetchQueries({
         include: "active",
       });
+      showSuccessToast()
     } catch (error) {
       console.error(error);
+      showFailureToast()
     }
   };
   return (
